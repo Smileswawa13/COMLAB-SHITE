@@ -14,6 +14,7 @@ def AddProduct():
     file1.close()
     print("Product ID"+pID+"has been added!")
 
+
 def ViewProduct():
     productList = readProduct()
     for eachRow in productList:
@@ -31,7 +32,23 @@ def readProduct():
             lines.append(eachLine)
     return lines
 
+
 def DeleteProduct():
+    prodID = input("Enter Product ID to Delete: ")
+    productList = readProduct()
+    for eachrow in productList:
+        if eachrow[0]==prodID:
+            productList.remove(eachrow)
+    SaveProduct(productList)
+    print("Product ID "+prodID+" has been deleted.")
+
+def SaveProduct(prodList):
+    file = open('Product.txt', 'w')
+    for eachrow in prodList:
+        line = (eachrow[0] +"\t"+eachrow[1]+"t"+eachrow[2]
+                +"\t"+eachrow[3]+"\t"+eachrow[4]+"\n")
+        file.write(line)
+    file.close()
     
 def prodMngt():
     print("[A]dd Product \t [U]pdate Product")
@@ -50,6 +67,7 @@ def prodMngt():
 
 def userMngt():
     pass
+
 
 while(test):
     print("******************************************")
