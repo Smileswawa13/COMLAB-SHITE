@@ -12,16 +12,16 @@ def AddProduct():
     file1 = open("Product.txt", 'a')
     file1.write(product +"\n")
     file1.close()
-    print("Product ID"+pID+"has been added!")
+    print("Product ID "+pID+"has been added!")
 
 
 def ViewProduct():
     productList = readProduct()
     for eachRow in productList:
         print("Product ID : "+eachRow[0]+"\t\t Name: "
-        + eachRow[1] + "\t\t Description : " + eachRow[2]
-        + "\t\t Quantity : " + eachRow[3]+ "\t\t Price : "
-        + eachRow[4])
+        +eachRow[1]+ "\t\t Description : "+eachRow[2]
+        +"\t\t Quantity : "+eachRow[3]+ "\t\t Price : "
+        +eachRow[4])
 
 def readProduct():
     lines = []
@@ -45,14 +45,15 @@ def DeleteProduct():
 def SaveProduct(prodList):
     file = open('Product.txt', 'w')
     for eachrow in prodList:
-        line = (eachrow[0] +"\t"+eachrow[1]+"t"+eachrow[2]
+        line = (eachrow[0] +"\t"+eachrow[1]+"\t"+eachrow[2]
                 +"\t"+eachrow[3]+"\t"+eachrow[4]+"\n")
         file.write(line)
     file.close()
-    
+
 def prodMngt():
     print("[A]dd Product \t [U]pdate Product")
     print("[D]elete Product \t [V]iew Product")
+    print("[E]xit Program")
     prodOp = input("Enter Operation: ")
     if prodOp == "A":
         AddProduct()
@@ -62,6 +63,9 @@ def prodMngt():
         UpdateProduct()
     elif prodOp == "V":
         ViewProduct()
+    elif prodOp == "E":
+        print("Exiting Program!")
+        exit()
     else:
         print("Invalid Input")
 
