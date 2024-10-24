@@ -69,6 +69,34 @@ def prodMngt():
     else:
         print("Invalid Input")
 
+def UpdateProduct():
+    prodID = input("Enter Product ID: ")
+    productList = readProduct()
+    for eachrow in productList:
+        if eachrow[0] == prodID:
+            print(eachrow)
+            print("[N]ame \t [D]escription")
+            print("[Q]Quantity \t [P]rice")
+            prodDetails = input("Enter the detail to Update: ")
+            prodNewValue = input("Enter new Value: ")
+            if prodDetails == "N":
+                eachrow.pop(1)
+                eachrow.insert(1, prodNewValue)
+            elif prodDetails == "N":
+                eachrow.pop(2)
+                eachrow.insert(2, prodNewValue)
+            elif prodDetails == "N":
+                eachrow.pop(3)
+                eachrow.insert(3, prodNewValue)
+            elif prodDetails == "N":
+                eachrow.pop(4)
+                eachrow.insert(4, prodNewValue)
+            else:
+                print("Invalid Input")
+    SaveProduct(productList)
+    print("Product ID "+prodID+" detail has been Updated.")
+    ViewProduct()
+
 def userMngt():
     pass
 
