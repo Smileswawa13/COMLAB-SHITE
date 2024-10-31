@@ -39,8 +39,11 @@ def DeleteProduct():
     for eachrow in productList:
         if eachrow[0]==prodID:
             productList.remove(eachrow)
-    SaveProduct(productList)
-    print("Product ID "+prodID+" has been deleted.")
+            SaveProduct(productList)
+            print("Product ID " + prodID + " has been deleted.")
+        else:
+            print("This Product ID does not exist!")
+            break
 
 def SaveProduct(prodList):
     file = open('Product.txt', 'w')
