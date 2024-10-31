@@ -1,19 +1,24 @@
 test = True
 
 def AddProduct():
-    pID = input("Enter Product ID: ")
-    pName = input("Enter Product Name: ")
-    pDescription = input("Enter Product Description: ")
-    pQuantity = input("Enter Product Quantity: ")
-    pPrice = input("Enter Price: ")
-    #Append to a file
-    product =(pID + "\t" +pName+"\t"+pDescription+"\t"
-              +pQuantity+"\t"+pPrice)
     file1 = open("Product.txt", 'a')
-    file1.write(product +"\n")
-    file1.close()
-    print("Product ID "+pID+"has been added!")
-
+    productList = readProduct()
+    for eachRow in productList:
+        pID = input("Enter Product ID: ")
+        if pID not in eachRow[0]:
+            pName = input("Enter Product Name: ")
+            pDescription = input("Enter Product Description: ")
+            pQuantity = input("Enter Product Quantity: ")
+            pPrice = input("Enter Price: ")
+            #Append to a file
+            product =(pID + "\t" +pName+"\t"+pDescription+"\t"
+                      +pQuantity+"\t"+pPrice)
+            file1.write(product +"\n")
+            file1.close()
+            print("Product ID "+pID+"has been added!")
+            break
+        else:
+            print(f"This product you're trying to input {pID} already exists")
 
 def ViewProduct():
     productList = readProduct()
