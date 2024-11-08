@@ -162,9 +162,14 @@ def add_fertilizer(farmer_subfolder, farmer_name):
 
 # 📝 Function to edit fertilizer data
 def edit_fertilizer(farmer_subfolder, farmer_name):
+    # Display all fertilizers (view function assumed to exist)
     view_fertilizer(farmer_name)
+
     try:
+        # Ask for the fertilizer ID to edit
         fert_id = int(input("Enter the fertilizer ID to edit: "))
+
+        # Check if the fertilizer exists
         if fert_id not in fertilizer:
             print("❌ Fertilizer not found.")
             return
@@ -172,16 +177,74 @@ def edit_fertilizer(farmer_subfolder, farmer_name):
         current_data = fertilizer[fert_id]  # 📜 Retrieve current data
 
         # Prompt user for new values with the option to keep current ones
-        scheduled_date = get_valid_date("Enter the new scheduled date (YYYY-MM-DD) or press Enter to keep the current date: ")
+        scheduled_date = get_valid_date(
+            "Enter the new scheduled date (YYYY-MM-DD) or press Enter to keep the current date: ")
         fertilizer[fert_id]['Scheduled Date'] = scheduled_date if scheduled_date else current_data['Scheduled Date']
 
-        # Other fields follow the same structure...
-        # (Continue with similar prompts for other fields)
+        # Ask for application date
+        application_date = get_valid_date(
+            "Enter the new application date (YYYY-MM-DD) or press Enter to keep the current date: ")
+        fertilizer[fert_id]['Application Date'] = application_date if application_date else current_data[
+            'Application Date']
 
+        # Ask for crop name applied to
+        crop_name = input(f"Enter the new crop name (currently '{current_data['Crop Applied to']}'): ").strip()
+        fertilizer[fert_id]['Crop Applied to'] = crop_name if crop_name else current_data['Crop Applied to']
+
+        # Ask for fertilizer name
+        fert_name = input(f"Enter the new fertilizer name (currently '{current_data['Name']}'): ").strip()
+        fertilizer[fert_id]['Name'] = fert_name if fert_name else current_data['Name']
+
+        # Ask for fertilizer variety
+        fert_variety = input(f"Enter the new fertilizer variety (currently '{current_data['Variety']}'): ").strip()
+        fertilizer[fert_id]['Variety'] = fert_variety if fert_variety else current_data['Variety']
+
+        # Ask for field where fertilizer applied
+        fert_field = input(f"Enter the new field (currently '{current_data['Field']}'): ").strip()
+        fertilizer[fert_id]['Field'] = fert_field if fert_field else current_data['Field']
+
+        # Ask for the area applied (in hectares)
+        while True:
+            try:
+                fert_area = input(f"Enter the new area (currently {current_data['Area']} hectares): ").strip()
+                fert_area = float(fert_area) if fert_area else current_data['Area']
+                fertilizer[fert_id]['Area'] = fert_area
+                break
+            except ValueError:
+                print("❌ Invalid input for area, it should be numeric.")
+
+        # Ask for quantity applied (in kilograms)
+        while True:
+            try:
+                fert_quantity = input(f"Enter the new quantity (currently {current_data['Quantity']} kg): ").strip()
+                fert_quantity = float(fert_quantity) if fert_quantity else current_data['Quantity']
+                fertilizer[fert_id]['Quantity'] = fert_quantity
+                break
+            except ValueError:
+                print("❌ Invalid input for quantity, it should be numeric.")
+
+        # Ask for any additional notes
+        fert_notes = input(f"Enter the new notes (currently '{current_data['Notes']}'): ").strip()
+        fertilizer[fert_id]['Notes'] = fert_notes if fert_notes else current_data['Notes']
+
+        # Ask for the supplier cost
+        while True:
+            try:
+                supplier_cost = input(
+                    f"Enter the new supplier cost (currently {current_data['Supplier Cost']} PHP): ").strip()
+                supplier_cost = float(supplier_cost) if supplier_cost else current_data['Supplier Cost']
+                fertilizer[fert_id]['Supplier Cost'] = supplier_cost
+                break
+            except ValueError:
+                print("❌ Invalid input for supplier cost, it should be a numeric value.")
+
+        # Save the updated fertilizer data
         save_fertilizer(farmer_subfolder)
         print(f"✅ Fertilizer ID {fert_id} edited successfully.")
+
     except ValueError:
         print("❌ Invalid ID.")
+
 
 # 👀 Function to view all fertilizers
 def view_fertilizer(farmer_name):
