@@ -9,12 +9,12 @@ harvests = {}
 # Function to validate the date input
 def get_valid_date(prompt):
     while True:
-        date_input = input(prompt)
+        date_input = input(f"\033[92m🌾 {prompt} 🌿\033[0m")  # Green for farming theme
         try:
             valid_date = datetime.strptime(date_input, "%Y-%m-%d")
             return valid_date
         except ValueError:
-            print("Invalid date format. Please enter a valid date in the format YYYY-MM-DD.")
+            print("\033[91m❌ Invalid date format. Please enter a valid date in the format YYYY-MM-DD. ❌\033[0m")  # Red for error
 
 # Function for the main harvest management menu
 def harvest_menu(farmer_name):
@@ -22,33 +22,33 @@ def harvest_menu(farmer_name):
     farmer_subfolder = make_farmer_folder(farmer_name)
 
     if not farmer_subfolder:
-        print("Farmer folder not created, exiting harvest management.")
+        print("\033[91m❌ Farmer folder not created, exiting harvest management. ❌\033[0m")  # Red for error
         return
 
     # Load harvest data from the file
     load_harvests(farmer_subfolder)
 
     while True:
-        print(f"~~ Harvest Management - Farmer {farmer_name} ~~")
+        print(f"\033[92m🌱~~ Harvest Management - Farmer {farmer_name} ~~🌱\033[0m")  # Green for main menu
         options = {
-            "Add Harvest": add_harvest,
-            "Edit Harvest": edit_harvest,
-            "View Harvests": view_harvests,
-            "Delete Harvest": delete_harvest,
-            "Quit Harvest Management": None
+            "Add Harvest 🌾": add_harvest,
+            "Edit Harvest ✏️": edit_harvest,
+            "View Harvests 📋": view_harvests,
+            "Delete Harvest 🗑️": delete_harvest,
+            "Quit Harvest Management 🚪": None
         }
 
         for index, (action, key) in enumerate(options.items(), 1):
-            print(f"{index}. {action}")
-        print(f"What would you like to do, farmer {farmer_name}?")
+            print(f"\033[93m{index}. {action}\033[0m")  # Yellow for action choices
+        print(f"\033[92m🌻 What would you like to do, farmer {farmer_name}? 🌻\033[0m")
 
         try:
-            action = int(input("Enter here using the corresponding number: "))
+            action = int(input("\033[94m🌾 Enter here using the corresponding number: 🌾\033[0m"))  # Blue for input prompt
 
             if 1 <= action <= 4:
                 selected_action = list(options.keys())[action - 1]
                 selected_function = options[selected_action]
-                print(f"Executing...'{selected_action}'.")
+                print(f"\033[93m🌱 Executing...'{selected_action}' 🌾\033[0m.")  # Yellow for execution message
 
                 if callable(selected_function):
                     if selected_function == view_harvests:
@@ -57,13 +57,13 @@ def harvest_menu(farmer_name):
                         selected_function(farmer_subfolder, farmer_name)
 
             elif action == 5:
-                print("Going Back to Main Menu")
+                print("\033[92m🚪 Going Back to Main Menu 🚪\033[0m")  # Green for going back message
                 break
 
             else:
-                print("Please enter a valid number between 1 and 5.")
+                print("\033[91m❌ Please enter a valid number between 1 and 5. ❌\033[0m")  # Red for invalid input
         except ValueError:
-            print("Please enter a valid number.")
+            print("\033[91m❌ Please enter a valid number. ❌\033[0m")  # Red for invalid input
 
 # Function to load harvest data from a file
 def load_harvests(farmer_subfolder):
@@ -87,10 +87,10 @@ def load_harvests(farmer_subfolder):
                         'Notes': harvest_data[9]
                     }
                 except ValueError as e:
-                    print(f"Error loading harvest data: {e}. Skipping line.")
-        print("Harvests loaded successfully.")
+                    print(f"\033[91m❌ Error loading harvest data: {e}. Skipping line. ❌\033[0m")
+        print("\033[92m🌾 Harvests loaded successfully. 🌾\033[0m")
     else:
-        print("No harvest file found. Starting with an empty list.")
+        print("\033[91m❌ No harvest file found. Starting with an empty list. ❌\033[0m")
 
 # Function to save harvest data into the file
 def save_harvests(farmer_subfolder):
@@ -104,45 +104,45 @@ def save_harvests(farmer_subfolder):
                        f"{harvest_data['Variety:']},{harvest_data['Field:']},{harvest_data['Harvest Quantity']},"
                        f"{harvest_data['Price Per Kg (PHP)']},"
                        f"{harvest_data['Quality Assessment:']},{harvest_data['Notes']}\n")
-    print("Harvests saved successfully.")
+    print("\033[92m🌾 Harvests saved successfully. 🌾\033[0m")
 
 # Function to add harvest data
 def add_harvest(farmer_subfolder, farmer_name):
-    print("~~ Adding New Harvest ~~")
+    print("\033[92m🌱~~ Adding New Harvest ~~🌱\033[0m")
     try:
-        harvest_id = int(input("Please enter the harvest ID: "))
+        harvest_id = int(input("\033[94m🌾 Please enter the harvest ID: 🌾\033[0m"))
     except ValueError:
-        print("Invalid harvest ID. It should be a numeric value.")
+        print("\033[91m❌ Invalid harvest ID. It should be a numeric value. ❌\033[0m")
         return
 
     if harvest_id in harvests:
-        print(f"Harvest with ID '{harvest_id}' already exists!")
+        print(f"\033[91m❌ Harvest with ID '{harvest_id}' already exists! ❌\033[0m")
         return
 
     # Input harvest details
-    harvest_date = get_valid_date("Enter the harvest date (YYYY-MM-DD): ")
-    planted_date = get_valid_date("Enter the date the crop was planted (YYYY-MM-DD): ")
-    crop_name = get_non_empty_input("Enter the crop name: ").strip()
-    crop_variety = get_non_empty_input("Enter the crop variety: ").strip()
-    crop_field = get_non_empty_input("Enter the field or location: ").strip()
+    harvest_date = get_valid_date("\033[94m🌾 Enter the harvest date (YYYY-MM-DD): 🌾\033[0m")
+    planted_date = get_valid_date("\033[94m🌾 Enter the date the crop was planted (YYYY-MM-DD): 🌾\033[0m")
+    crop_name = get_non_empty_input("\033[92m🌾 Enter the crop name: 🌿\033[0m").strip()
+    crop_variety = get_non_empty_input("\033[92m🌾 Enter the crop variety: 🌿\033[0m").strip()
+    crop_field = get_non_empty_input("\033[92m🌾 Enter the field or location: 🌿\033[0m").strip()
 
     while True:
         try:
-            harvest_quantity = int(input("Enter the harvest quantity in kilograms: ").strip())
+            harvest_quantity = int(input("\033[94m🌾 Enter the harvest quantity in kilograms: 🌾\033[0m").strip())
             break
         except ValueError:
-            print("Invalid quantity. Please enter a numeric value.")
+            print("\033[91m❌ Invalid quantity. Please enter a numeric value. ❌\033[0m")
 
     # New input for price per kg (currency in PHP)
     while True:
         try:
-            price_per_kg = float(input("Enter the price per kilogram in PHP: ").strip())
+            price_per_kg = float(input("\033[94m🌾 Enter the price per kilogram in PHP: 🌾\033[0m").strip())
             break
         except ValueError:
-            print("Invalid price. Please enter a numeric value.")
+            print("\033[91m❌ Invalid price. Please enter a numeric value. ❌\033[0m")
 
-    quality_assessment = input("Enter a quality assessment for the harvest: ").strip()
-    harvest_notes = input("Enter any additional notes about the harvest (optional): ").strip()
+    quality_assessment = input("\033[92m🌿 Enter a quality assessment for the harvest: 🌿\033[0m").strip()
+    harvest_notes = input("\033[92m🌾 Enter any additional notes about the harvest (optional): 🌾\033[0m").strip()
 
     harvests[harvest_id] = {
         'Date Harvested:': harvest_date,
@@ -157,114 +157,63 @@ def add_harvest(farmer_subfolder, farmer_name):
     }
 
     save_harvests(farmer_subfolder)
-    print(f"Harvest ID {harvest_id} has been added!")
+    print(f"\033[92m🌿 Harvest ID {harvest_id} has been added! 🌾\033[0m")
 
 # Function to view all harvests
 def view_harvests(farmer_name):
     farmer_subfolder = make_farmer_folder(farmer_name)
     load_harvests(farmer_subfolder)
 
-    print("~~ All Harvests Stored in the Logbook ~~")
+    print("\033[92m🌿~~ All Harvests Stored ~~🌿\033[0m")
 
     if not harvests:
-        print("No harvests found.")
-        return
+        print("\033[91m❌ No harvest data available! ❌\033[0m")
+    else:
+        table = []
+        for harvest_id, harvest_data in harvests.items():
+            table.append([harvest_id, harvest_data['Name of Crop:'], harvest_data['Harvest Quantity'], harvest_data['Price Per Kg (PHP)']])
+        print(tabulate(table, headers=["Harvest ID", "Crop Name", "Quantity (Kg)", "Price per Kg"], tablefmt="grid"))
 
-    headers = ["Harvest ID", "Date Harvested", "Date Planted", "Crop Name", "Variety", "Field", "Harvest Quantity (kg)", "Price Per Kg (PHP)", "Quality", "Notes"]
-    table_data = []
-
-    for harvest_id, details in harvests.items():
-        formatted_date_harvested = details['Date Harvested:'].strftime("%Y-%m-%d")
-        formatted_date_planted = details['Date Planted:'].strftime("%Y-%m-%d")
-
-        # Format the price per kg to include PHP symbol
-        price_per_kg = f"₱ {details['Price Per Kg (PHP)']:.2f}"
-
-        row = [
-            harvest_id,
-            formatted_date_harvested,
-            formatted_date_planted,
-            details['Name of Crop:'],
-            details['Variety:'],
-            details['Field:'],
-            details['Harvest Quantity'],
-            price_per_kg,  # Display the price with PHP
-            details['Quality Assessment:'],
-            details['Notes'] or "No notes"
-        ]
-        table_data.append(row)
-
-    print(tabulate(table_data, headers=headers, tablefmt="grid"))
-
-# Function to edit existing harvest data
+# Function to edit a specific harvest
 def edit_harvest(farmer_subfolder, farmer_name):
     view_harvests(farmer_name)
     try:
-        harvest_id = int(input("Enter the harvest ID to edit: "))
-        if harvest_id not in harvests:
-            print("Harvest not found.")
-            return
-
-        # Retrieve current data for each field
-        current_data = harvests[harvest_id]
-
-        # Prompt for each field, keeping the existing value if the user skips
-        crop_name = input(f"Enter the new crop name [{current_data['Name of Crop:']}]: ").strip()
-        harvests[harvest_id]['Name of Crop:'] = crop_name if crop_name else current_data['Name of Crop:']
-
-        crop_variety = input(f"Enter the new crop variety [{current_data['Variety:']}]: ").strip()
-        harvests[harvest_id]['Variety:'] = crop_variety if crop_variety else current_data['Variety:']
-
-        field = input(f"Enter the new field or location [{current_data['Field:']}]: ").strip()
-        harvests[harvest_id]['Field:'] = field if field else current_data['Field:']
-
-        # Numeric field for harvest quantity with option to keep current value
-        quantity = input(f"Enter the new harvest quantity (kg) [{current_data['Harvest Quantity']}]: ").strip()
-        if quantity:
-            try:
-                harvests[harvest_id]['Harvest Quantity'] = int(quantity)
-            except ValueError:
-                print("Invalid input for quantity. Keeping current value.")
-        else:
-            harvests[harvest_id]['Harvest Quantity'] = current_data['Harvest Quantity']
-
-        # New input for price per kg (currency in PHP)
-        price_per_kg = input(f"Enter the new price per kilogram in PHP [{current_data['Price Per Kg (PHP)']}]: ").strip()
-        if price_per_kg:
-            try:
-                harvests[harvest_id]['Price Per Kg (PHP)'] = float(price_per_kg)
-            except ValueError:
-                print("Invalid input for price. Keeping current value.")
-        else:
-            harvests[harvest_id]['Price Per Kg (PHP)'] = current_data['Price Per Kg (PHP)']
-
-        # Additional text fields
-        quality = input(f"Enter the new quality assessment [{current_data['Quality Assessment:']}]: ").strip()
-        harvests[harvest_id]['Quality Assessment:'] = quality if quality else current_data['Quality Assessment:']
-
-        # Optional notes field
-        notes = input(f"[Optional] Additional notes [{current_data['Notes'] or 'No notes'}]: ").strip()
-        harvests[harvest_id]['Notes'] = notes if notes else current_data['Notes']
-
-        # Save updated harvest data
-        save_harvests(farmer_subfolder)
-        print(f"Harvest ID {harvest_id} updated successfully.")
-
+        harvest_id = int(input("\033[94m🌾 Enter the ID of the harvest you want to edit: 🌾\033[0m"))
     except ValueError:
-        print("Invalid input. Please enter a valid harvest ID.")
+        print("\033[91m❌ Invalid harvest ID. ❌\033[0m")
+        return
+
+    if harvest_id not in harvests:
+        print("\033[91m❌ Harvest ID not found. ❌\033[0m")
+        return
+
+    print(f"\033[92m🌿 Editing Harvest ID {harvest_id} 🌿\033[0m")
+    harvest_data = harvests[harvest_id]
+
+    # Edit the details
+    harvest_data['Name of Crop:'] = get_non_empty_input("\033[92m🌾 Enter the crop name: 🌿\033[0m").strip()
+    harvest_data['Variety:'] = get_non_empty_input("\033[92m🌾 Enter the crop variety: 🌿\033[0m").strip()
+    harvest_data['Field:'] = get_non_empty_input("\033[92m🌾 Enter the field or location: 🌿\033[0m").strip()
+    harvest_data['Harvest Quantity'] = int(input("\033[94m🌾 Enter the updated harvest quantity in kilograms: 🌾\033[0m"))
+    harvest_data['Price Per Kg (PHP)'] = float(input("\033[94m🌾 Enter the updated price per kilogram in PHP: 🌾\033[0m"))
+    harvest_data['Quality Assessment:'] = input("\033[92m🌿 Enter the updated quality assessment: 🌿\033[0m").strip()
+    harvest_data['Notes'] = input("\033[92m🌾 Enter any updated notes about the harvest: 🌾\033[0m").strip()
+
+    save_harvests(farmer_subfolder)
+    print(f"\033[92m🌿 Harvest ID {harvest_id} has been updated! 🌾\033[0m")
 
 # Function to delete a harvest with confirmation
 def delete_harvest(farmer_subfolder, farmer_name):
     view_harvests(farmer_name)  # Display the list of harvests first
     try:
-        harvest_id = int(input("Enter the harvest ID to delete: "))
+        harvest_id = int(input("\033[94m🌾 Enter the harvest ID to delete: 🌾\033[0m"))
         if harvest_id in harvests:
             # Get the correct harvest name for logging purposes
             harvest_name = harvests[harvest_id]['Name of Crop:']
 
             # Prompt for confirmation
             confirmation = input(
-                f"Are you sure you want to delete harvest ID {harvest_id} ('{harvest_name}')? Type 'yes' to confirm: ").strip().lower()
+                f"\033[91m❓ Are you sure you want to delete harvest ID {harvest_id} ('{harvest_name}')? Type 'yes' to confirm: ❓\033[0m").strip().lower()
             if confirmation == "yes":
                 # Log the harvest removal before deleting
                 log_harvest_removal(farmer_subfolder, harvest_id, harvest_name, farmer_name)
@@ -272,15 +221,15 @@ def delete_harvest(farmer_subfolder, farmer_name):
                 # Delete the harvest
                 del harvests[harvest_id]
                 save_harvests(farmer_subfolder)  # Save the updated harvest list
-                print(f"Harvest with ID {harvest_id} and name '{harvest_name}' has been deleted.")
+                print(f"\033[91m❌ Harvest with ID {harvest_id} and name '{harvest_name}' has been deleted. ❌\033[0m")
             else:
-                print("Deletion canceled.")
+                print("\033[92m✅ Deletion canceled. ✅\033[0m")
         else:
-            print("Harvest not found.")
+            print("\033[91m❌ Harvest not found. ❌\033[0m")
     except ValueError:
-        print("Invalid input. Please enter a valid harvest ID.")
+        print("\033[91m❌ Invalid input. Please enter a valid harvest ID. ❌\033[0m")
     except Exception as e:
-        print(f"Error deleting harvest: {e}")
+        print(f"\033[91m❌ Error deleting harvest: {e} ❌\033[0m")
 
 # Function to log harvest removal action
 def log_harvest_removal(farmer_subfolder, harvest_id, harvest_name, farmer_name):
@@ -292,13 +241,14 @@ def log_harvest_removal(farmer_subfolder, harvest_id, harvest_name, farmer_name)
     # Append the log entry to the log file
     with open(log_file_path, 'a') as log_file:
         log_file.write(log_entry)
-    print("Harvest removal logged successfully.")
+    print("\033[91m❌ Harvest removal logged successfully. ❌\033[0m")
 
 
-# Helper function to get non-empty input
+# Function to get non-empty input
 def get_non_empty_input(prompt):
     while True:
-        user_input = input(prompt)
-        if user_input.strip():
+        user_input = input(f"\033[92m{prompt}\033[0m").strip()
+        if user_input:
             return user_input
-        print("This field cannot be empty. Please provide a value.")
+        else:
+            print("\033[91m❌ Input cannot be empty. Please enter something. ❌\033[0m")
