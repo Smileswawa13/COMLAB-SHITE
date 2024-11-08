@@ -25,7 +25,7 @@ def pesticide_medicine_menu(farmer_name):
     load_pesticide_medicine(farmer_subfolder)
 
     while True:
-        print(f"\n🌱~~ Pesticide & Medicine Management - Farmer {farmer_name} ~~🌱")
+        print(f"\033[92m🌱~~ Pesticide & Medicine Management - Farmer {farmer_name} ~~🌱\033[0m")
         options = {
             "🌿 Add Pesticide/Medicine": add_pesticide_medicine,
             "✏️ Edit Pesticide/Medicine": edit_pesticide_medicine,
@@ -34,25 +34,32 @@ def pesticide_medicine_menu(farmer_name):
             "🚪 Quit Pesticide/Medicine Management": None
         }
 
-        for index, action in enumerate(options, 1):
-            print(f"{index}. {action}")
+        for index, (action, key) in enumerate(options.items(), 1):
+            print(f"\033[93m{index}. {action}\033[0m")  # Yellow for action choices
+        print(f"\033[92m🌻 What would you like to do, farmer {farmer_name}? 🌻\033[0m")
 
         try:
-            action = int(input("📋 Enter here using the corresponding number: "))
+            action = int(input("\033[94m🌾 Enter here using the corresponding number: 🌾\033[0m"))  # Blue for input prompt
+
             if 1 <= action <= 4:
-                selected_function = list(options.values())[action - 1]
+                selected_action = list(options.keys())[action - 1]
+                selected_function = options[selected_action]
+                print(f"\033[93m🌱 Executing...'{selected_action}' 🌾\033[0m.")  # Yellow for execution message
+
                 if callable(selected_function):
                     if selected_function == view_pesticide_medicine:
                         selected_function(farmer_name)
                     else:
                         selected_function(farmer_subfolder, farmer_name)
+
             elif action == 5:
-                print("🔙 Exiting Pesticide & Medicine Management")
+                print("\033[92m🚪 Going Back to Main Menu 🚪\033[0m")  # Green for going back message
                 break
+
             else:
-                print("❌ Invalid choice. Choose between 1 and 5.")
+                print("\033[91m❌ Please enter a valid number between 1 and 5. ❌\033[0m")  # Red for invalid input
         except ValueError:
-            print("❌ Please enter a valid number.")
+            print("\033[91m❌ Please enter a valid number. ❌\033[0m")  # Red for invalid input
 
 # Load function with a message for clarity
 def load_pesticide_medicine(farmer_subfolder):
