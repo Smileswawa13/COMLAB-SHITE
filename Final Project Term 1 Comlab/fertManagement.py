@@ -169,7 +169,9 @@ def add_fertilizer(farmer_subfolder, farmer_name):
     print("✅ Fertilizer added successfully.")
 
 # 📝 Function to edit fertilizer data
+
 def edit_fertilizer(farmer_subfolder, farmer_name):
+    print("~~ Editing Fertilizer ~~")
     # Display all fertilizers (view function assumed to exist)
     view_fertilizer(farmer_name)
 
@@ -256,6 +258,7 @@ def edit_fertilizer(farmer_subfolder, farmer_name):
 
 # 👀 Function to view all fertilizers
 def view_fertilizer(farmer_name):
+    print("🌱~~ Editing Fertilizer ~~🌱")
     farmer_subfolder = make_farmer_folder(farmer_name)
     load_fertilizer(farmer_subfolder)
 
@@ -287,6 +290,7 @@ def view_fertilizer(farmer_name):
 
 # 🗑 Function to delete fertilizer
 def delete_fertilizer(farmer_subfolder, farmer_name):
+    print("\033[92m🌾~~ Deleting a Fertilizer ~~\033[0m")
     view_fertilizer(farmer_name)
     try:
         fert_id = int(input("Enter the fertilizer ID to delete: "))
