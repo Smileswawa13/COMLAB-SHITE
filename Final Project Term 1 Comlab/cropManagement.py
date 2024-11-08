@@ -277,6 +277,9 @@ def edit_crops(farmer_subfolder, farmer_name):
 def delete_crops(farmer_subfolder, farmer_name):
     print("\033[92m🌾~~ Deleting a crop ~~\033[0m")
 
+    # Display the list of all crop records for the farmer
+    view_crops(farmer_name)
+
     try:
         crop_id = int(input("\033[93m🔢 Enter the crop ID to delete: \033[0m"))
     except ValueError:
