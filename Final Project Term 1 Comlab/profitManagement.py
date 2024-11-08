@@ -211,11 +211,9 @@ def calculate_overall_totals():
     total_profits = total_sales - total_expenses
     return total_sales, total_expenses, total_profits
 
-
 from colorama import Fore, Style
-import emoji
 from tabulate import tabulate
-#Generate Report Function
+
 def generate_report(farmer_name):
     # Load data specific to the farmer's folder
     load_crops(farmer_name)
@@ -239,23 +237,23 @@ def generate_report(farmer_name):
 
         # Determine the emoji to display based on the profits
         if total_profits < 0:
-            profit_emoji = emoji.emojize(":tomato:")  # Tomato emoji for negative profits
+            profit_emoji = "🍅"  # Tomato emoji for negative profits
         else:
-            profit_emoji = emoji.emojize(":corn:")  # Corn emoji for positive profits
+            profit_emoji = "🌽"  # Corn emoji for positive profits
 
         # Determine color for profits and expenses
         profit_color = Fore.RED if total_profits < 0 else Fore.GREEN
         expense_color = Fore.RED  # Expenses are always negative
 
         # Append the data with color and emojis
-        table_data.append([emoji.emojize(":moneybag:") + f" Total Sales ({period.capitalize()})", f"{Fore.CYAN}₱{total_sales:,.2f}{Style.RESET_ALL}"])
-        table_data.append([emoji.emojize(":chart_with_upwards_trend:") + f" Total Expenses ({period.capitalize()})", f"{expense_color}₱{total_expenses:,.2f}{Style.RESET_ALL}"])
-        table_data.append([emoji.emojize(":money_mouth_face:") + f" Total Profits ({period.capitalize()})", f"{profit_color}₱{total_profits:,.2f} {profit_emoji}{Style.RESET_ALL}"])
+        table_data.append([f"💰 Total Sales ({period.capitalize()})", f"{Fore.CYAN}₱{total_sales:,.2f}{Style.RESET_ALL}"])
+        table_data.append([f"📈 Total Expenses ({period.capitalize()})", f"{expense_color}₱{total_expenses:,.2f}{Style.RESET_ALL}"])
+        table_data.append([f"💸 Total Profits ({period.capitalize()})", f"{profit_color}₱{total_profits:,.2f} {profit_emoji}{Style.RESET_ALL}"])
 
     # Add the overall totals to the table with emojis
-    table_data.append([emoji.emojize(":heavy_dollar_sign:") + " Overall Total Sales", f"{Fore.CYAN}₱{overall_sales:,.2f}{Style.RESET_ALL}"])
-    table_data.append([emoji.emojize(":money_with_wings:") + " Overall Total Expenses", f"{Fore.RED}₱{overall_expenses:,.2f}{Style.RESET_ALL}"])
-    table_data.append([emoji.emojize(":money_bag:") + f" Overall Total Profits", f"{Fore.GREEN}₱{overall_profits:,.2f}{Style.RESET_ALL}"])
+    table_data.append([f"💵 Overall Total Sales", f"{Fore.CYAN}₱{overall_sales:,.2f}{Style.RESET_ALL}"])
+    table_data.append([f"💸 Overall Total Expenses", f"{Fore.RED}₱{overall_expenses:,.2f}{Style.RESET_ALL}"])
+    table_data.append([f"💰 Overall Total Profits", f"{Fore.GREEN}₱{overall_profits:,.2f}{Style.RESET_ALL}"])
 
     # Personal greeting and report header
     print(f"{Fore.YELLOW}🌾 Hello Farmer {farmer_name}! 🌾")
@@ -268,4 +266,5 @@ def generate_report(farmer_name):
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
     print(f"{Fore.GREEN}Report generated successfully!{Style.RESET_ALL}")
+
 
