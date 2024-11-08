@@ -159,6 +159,7 @@ def add_harvest(farmer_subfolder, farmer_name):
     save_harvests(farmer_subfolder)
     print(f"\033[92m🌿 Harvest ID {harvest_id} has been added! 🌾\033[0m")
 
+
 # Function to view all harvests
 def view_harvests(farmer_name):
     farmer_subfolder = make_farmer_folder(farmer_name)
@@ -171,8 +172,25 @@ def view_harvests(farmer_name):
     else:
         table = []
         for harvest_id, harvest_data in harvests.items():
-            table.append([harvest_id, harvest_data['Name of Crop:'], harvest_data['Harvest Quantity'], harvest_data['Price Per Kg (PHP)']])
-        print(tabulate(table, headers=["Harvest ID", "Crop Name", "Quantity (Kg)", "Price per Kg"], tablefmt="grid"))
+            # Format dates for viewing
+            date_harvested = harvest_data['Date Harvested:'].strftime("%Y-%m-%d") if harvest_data[
+                'Date Harvested:'] else 'N/A'
+            date_planted = harvest_data['Date Planted:'].strftime("%Y-%m-%d") if harvest_data[
+                'Date Planted:'] else 'N/A'
+
+            # Use "N/A" for missing or empty values
+            harvest_name = harvest_data.get('Name of Crop:', 'N/A') or 'N/A'
+            harvest_quantity = harvest_data.get('Harvest Quantity', 'N/A') or 'N/A'
+            price_per_kg = harvest_data.get('Price Per Kg (PHP)', 'N/A') or 'N/A'
+            quality_assessment = harvest_data.get('Quality Assessment:', 'N/A') or 'N/A'
+            notes = harvest_data.get('Notes', 'N/A') or 'N/A'
+
+            table.append([harvest_id, date_harvested, date_planted, harvest_name, harvest_quantity, price_per_kg,
+                          quality_assessment, notes])
+
+        print(tabulate(table, headers=["Harvest ID", "Date Harvested", "Date Planted", "Crop Name", "Quantity (Kg)",
+                                       "Price per Kg (PHP)", "Quality Assessment", "Notes"], tablefmt="grid"))
+
 
 # Function to edit a specific harvest
 def edit_harvest(farmer_subfolder, farmer_name):
@@ -190,17 +208,48 @@ def edit_harvest(farmer_subfolder, farmer_name):
     print(f"\033[92m🌿 Editing Harvest ID {harvest_id} 🌿\033[0m")
     harvest_data = harvests[harvest_id]
 
-    # Edit the details
-    harvest_data['Name of Crop:'] = get_non_empty_input("\033[92m🌾 Enter the crop name: 🌿\033[0m").strip()
-    harvest_data['Variety:'] = get_non_empty_input("\033[92m🌾 Enter the crop variety: 🌿\033[0m").strip()
-    harvest_data['Field:'] = get_non_empty_input("\033[92m🌾 Enter the field or location: 🌿\033[0m").strip()
-    harvest_data['Harvest Quantity'] = int(input("\033[94m🌾 Enter the updated harvest quantity in kilograms: 🌾\033[0m"))
-    harvest_data['Price Per Kg (PHP)'] = float(input("\033[94m🌾 Enter the updated price per kilogram in PHP: 🌾\033[0m"))
-    harvest_data['Quality Assessment:'] = input("\033[92m🌿 Enter the updated quality assessment: 🌿\033[0m").strip()
-    harvest_data['Notes'] = input("\033[92m🌾 Enter any updated notes about the harvest: 🌾\033[0m").strip()
+    # Edit the details with default fallback for empty values
+    date_harvested = input(f"\033[94m🌾 Enter the harvest date (current: {harvest_data['Date Harvested:'].strftime('%Y-%m-%d')}): 🌾\033[0m").strip()
+    date_planted = input(f"\033[94m🌾 Enter the planted date (current: {harvest_data['Date Planted:'].strftime('%Y-%m-%d')}): 🌾\033[0m").strip()
+
+    crop_name = input(f"\033[92m🌾 Enter the crop name (current: {harvest_data.get('Name of Crop:', 'N/A')}): 🌿\033[0m").strip() or harvest_data.get('Name of Crop:', 'N/A')
+    crop_variety = input(f"\033[92m🌾 Enter the crop variety (current: {harvest_data.get('Variety:', 'N/A')}): 🌿\033[0m").strip() or harvest_data.get('Variety:', 'N/A')
+    crop_field = input(f"\033[92m🌾 Enter the field or location (current: {harvest_data.get('Field:', 'N/A')}): 🌿\033[0m").strip() or harvest_data.get('Field:', 'N/A')
+
+    while True:
+        try:
+            harvest_quantity = int(input(f"\033[94m🌾 Enter the updated harvest quantity in kilograms (current: {harvest_data['Harvest Quantity']}): 🌾\033[0m"))
+            break
+        except ValueError:
+            print("\033[91m❌ Invalid quantity. Please enter a numeric value. ❌\033[0m")
+
+    while True:
+        try:
+            price_per_kg = float(input(f"\033[94m🌾 Enter the updated price per kilogram in PHP (current: {harvest_data['Price Per Kg (PHP)']}): 🌾\033[0m"))
+            break
+        except ValueError:
+            print("\033[91m❌ Invalid price. Please enter a numeric value. ❌\033[0m")
+
+    quality_assessment = input(f"\033[92m🌿 Enter the updated quality assessment (current: {harvest_data.get('Quality Assessment:', 'N/A')}): 🌿\033[0m").strip() or harvest_data.get('Quality Assessment:', 'N/A')
+    harvest_notes = input(f"\033[92m🌾 Enter any updated notes about the harvest (current: {harvest_data.get('Notes', '')}): 🌾\033[0m").strip() or harvest_data.get('Notes', '')
+
+    # Handle date changes (if empty input, retain the old date or set 'N/A')
+    if date_harvested:
+        harvest_data['Date Harvested:'] = datetime.strptime(date_harvested, "%Y-%m-%d")
+    if date_planted:
+        harvest_data['Date Planted:'] = datetime.strptime(date_planted, "%Y-%m-%d")
+
+    harvest_data['Name of Crop:'] = crop_name
+    harvest_data['Variety:'] = crop_variety
+    harvest_data['Field:'] = crop_field
+    harvest_data['Harvest Quantity'] = harvest_quantity
+    harvest_data['Price Per Kg (PHP)'] = price_per_kg
+    harvest_data['Quality Assessment:'] = quality_assessment
+    harvest_data['Notes'] = harvest_notes
 
     save_harvests(farmer_subfolder)
     print(f"\033[92m🌿 Harvest ID {harvest_id} has been updated! 🌾\033[0m")
+
 
 # Function to delete a harvest with confirmation
 def delete_harvest(farmer_subfolder, farmer_name):
@@ -243,12 +292,3 @@ def log_harvest_removal(farmer_subfolder, harvest_id, harvest_name, farmer_name)
         log_file.write(log_entry)
     print("\033[91m❌ Harvest removal logged successfully. ❌\033[0m")
 
-
-# Function to get non-empty input
-def get_non_empty_input(prompt):
-    while True:
-        user_input = input(f"\033[92m{prompt}\033[0m").strip()
-        if user_input:
-            return user_input
-        else:
-            print("\033[91m❌ Input cannot be empty. Please enter something. ❌\033[0m")
