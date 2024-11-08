@@ -3,286 +3,218 @@ from tabulate import tabulate
 import os
 from userFarmerFunctions import make_farmer_folder
 
-# 🌱 Global crops dictionary to store crop data
-crops = {}
+# Global dictionary to store expenses and maintenance records
+expenses = {}
 
-# 📅 Function to validate the date input
-def get_valid_date():
+# Function to validate date input
+def get_valid_date(prompt):
     while True:
-        date_input = input("📅 Enter the date the crop was planted in this format (YYYY-MM-DD): ")
+        date_input = input(f"🌟 {prompt} 🌟")
         try:
-            valid_date = datetime.strptime(date_input, "%Y-%m-%d")
-            return valid_date
+            return datetime.strptime(date_input, "%Y-%m-%d")
         except ValueError:
-            print("🚫 Invalid date format. Please enter a valid date in the format YYYY-MM-DD.")
+            print("❌ Invalid date format. Please enter a date in YYYY-MM-DD format. ❌")
 
-# 💵 Function to validate supplier cost input
-def get_valid_supplier_cost():
-    while True:
-        try:
-            supplier_cost = float(input("💵 Enter the supplier cost per kilogram in PHP: "))
-            if supplier_cost < 0:
-                print("🚫 Cost cannot be negative. Please enter a valid amount.")
-            else:
-                return supplier_cost
-        except ValueError:
-            print("🚫 Invalid input. Please enter a valid number for the supplier cost.")
-
-# 🌾 Function for the main crop management menu
-def crop_menu(farmer_name):
-    # 🔍 Get the farmer's subfolder path by calling make_farmer_folder
+# Function for the main expenses and maintenance menu
+def expenses_menu(farmer_name):
     farmer_subfolder = make_farmer_folder(farmer_name)
-
     if not farmer_subfolder:
-        print("🚫 Farmer folder not created, exiting crop management.")
+        print("⚠️ Farmer folder not created, exiting expenses management. ⚠️")
         return
 
-    # 🗂️ Load crops from the file
-    load_crops(farmer_subfolder)
+    load_expenses(farmer_subfolder)
 
     while True:
-        print(f"🌾~~Crop Management - Farmer {farmer_name}~~🌾")
+        print(f"~~ 💰 Expenses and Maintenance Management - Farmer {farmer_name} 💰 ~~")
         options = {
-            "🌱 Add Crops": add_crops,
-            "✏️ Edit Crops": edit_crops,
-            "📜 View Crops": view_crops,
-            "❌ Delete Crops": delete_crops,
-            "🔙 Quit Crop Management": None
+            "📝 Add Expense": add_expense,
+            "✏️ Edit Expense": edit_expense,
+            "📋 View Expenses": view_expenses,
+            "❌ Delete Expense": delete_expense,
+            "🔙 Quit Management": None
         }
 
-        for index, (action, key) in enumerate(options.items(), 1):
+        for index, action in enumerate(options, 1):
             print(f"{index}. {action}")
-        print(f"🔄 Which do you want to do, farmer {farmer_name}?")
 
         try:
-            action = int(input("Enter here using the corresponding number: "))
-
+            action = int(input("🔢 Enter your choice using the corresponding number: "))
             if 1 <= action <= 4:
-                selected_action = list(options.keys())[action - 1]
-                selected_function = options[selected_action]
-                print(f"▶️ Executing...'{selected_action}'.")
-
+                selected_function = list(options.values())[action - 1]
                 if callable(selected_function):
-                    # 🔑 Check if the crop function has an argument
-                    if selected_function == view_crops:
+                    if selected_function == view_expenses:
                         selected_function(farmer_name)
                     else:
                         selected_function(farmer_subfolder, farmer_name)
-
             elif action == 5:
-                print("🚪 Going Back to Main Menu")
+                print("👋 Exiting Expenses and Maintenance Management 👋")
                 break
-
             else:
-                print("🚫 Your input is not in the corresponding choices. Please enter a valid number between 1 and 5.")
+                print("❌ Invalid choice. Choose between 1 and 5. ❌")
         except ValueError:
-            print("🚫 Please enter a valid number.")
+            print("⚠️ Please enter a valid number. ⚠️")
 
-# 📂 Function to load crops from a file
-def load_crops(farmer_subfolder):
-    crops_file_path = os.path.join(farmer_subfolder, 'crops.txt')
-
-    if os.path.exists(crops_file_path):
-        with open(crops_file_path, 'r') as file:
+# Function to load expenses data from a file
+def load_expenses(farmer_subfolder):
+    expenses_file_path = os.path.join(farmer_subfolder, 'expenses.txt')
+    if os.path.exists(expenses_file_path):
+        with open(expenses_file_path, 'r') as file:
             for line in file:
-                crop_data = line.strip().split(",")
+                data = line.strip().split(",")
                 try:
-                    crop_id = int(crop_data[0])
-                    crops[crop_id] = {
-                        'Date planted:': datetime.strptime(crop_data[1], "%Y-%m-%d"),
-                        'Name of Crop:': crop_data[2],
-                        'Variety:': crop_data[3],
-                        'Field:': crop_data[4],
-                        'Area:': int(crop_data[5]),
-                        'Quantity': int(crop_data[6]),
-                        'Notes': crop_data[7],
-                        'Supplier Cost (PHP)': float(crop_data[8])  # New field for supplier cost
+                    expen_id = int(data[0])
+                    expenses[expen_id] = {
+                        'Date': datetime.strptime(data[1], "%Y-%m-%d"),
+                        'Expense Type': data[2],
+                        'Description': data[3],
+                        'Amount': float(data[4]),
+                        'Notes': data[5] if len(data) > 5 else ""
                     }
                 except ValueError as e:
-                    print(f"🚫 Error loading crop data: {e}. Skipping line.")
-        print("✅ Crops loaded successfully.")
+                    print(f"❌ Error loading expense data: {e}. Skipping line. ❌")
+        print("✅ Expenses loaded successfully. ✅")
     else:
-        print("⚠️ No crops file found. Starting with an empty list.")
+        print("⚠️ No expenses file found. Starting with an empty list. ⚠️")
 
-# 💾 Function to save crops into the file
-def save_crops(farmer_subfolder):
-    crops_file_path = os.path.join(farmer_subfolder, 'crops.txt')
+# Function to save expenses data to a file
+def save_expenses(farmer_subfolder):
+    expenses_file_path = os.path.join(farmer_subfolder, 'expenses.txt')
+    with open(expenses_file_path, 'w') as file:
+        for expen_id, data in expenses.items():
+            date = data['Date'].strftime("%Y-%m-%d")
+            file.write(f"{expen_id},{date},{data['Expense Type']},{data['Description']},{data['Amount']},{data['Notes']}\n")
+    print("✅ Expenses data saved successfully. ✅")
 
-    with open(crops_file_path, 'w') as file:
-        for crop_id, crop_data in crops.items():
-            formatted_date = crop_data['Date planted:'].strftime("%Y-%m-%d")
-            file.write(f"{crop_id},{formatted_date},{crop_data['Name of Crop:']},"
-                       f"{crop_data['Variety:']},{crop_data['Field:']},{crop_data['Area:']},"
-                       f"{crop_data['Quantity']},{crop_data['Notes']},{crop_data['Supplier Cost (PHP)']}\n")
-    print("✅ Crops saved successfully.")
-
-# 🌱 Function to add crops
-def add_crops(farmer_subfolder, farmer_name):
-    print("🌾~~ Adding new crop ~~")
+# Function to add expense data
+def add_expense(farmer_subfolder, farmer_name):
+    print("~~ ✨ Adding New Expense ✨ ~~")
     try:
-        crop_id = int(input("🔢 Please enter the crop id: "))
+        expen_id = int(input("🔑 Please enter a unique expense ID: "))
+        if expen_id in expenses:
+            print(f"⚠️ Expense with ID '{expen_id}' already exists! ⚠️")
+            return
     except ValueError:
-        print("🚫 Invalid crop ID. It should be a numeric value.")
+        print("❌ Invalid ID. It should be numeric. ❌")
         return
 
-    if crop_id in crops:
-        print(f"🚫 Crop with ID '{crop_id}' already exists!")
+    date = get_valid_date("🗓️ Enter the date of the expense (YYYY-MM-DD): ")
+    expen_type = input("💡 Enter the type of expense (e.g., maintenance, labor): ").strip()
+    expen_desc = input("📝 Enter a description of the expense: ").strip()
+    try:
+        expen_cost = float(input("💸 Enter the expense amount: ").strip())
+    except ValueError:
+        print("❌ Invalid input for amount. ❌")
         return
 
-    crop_date = get_valid_date()  # 📅 This returns a datetime object
-    crop_name = get_non_empty_input("🌱 Please enter the crop name: ").strip()
-    crop_variety = get_non_empty_input("🌾 Please enter the crop variety: ").strip()
-    crop_field = get_non_empty_input("📍 Please enter in which field the crop was planted: ").strip()
+    expen_notes = input("[Optional] 🗒️ Additional notes: ").strip()
 
-    while True:
-        try:
-            crop_area = int(input("📏 Please enter the area planted in hectares: ").strip())
-            crop_quantity = int(input("🌾 Please enter the amount of seeds planted in kilograms: ").strip())
-            break
-        except ValueError:
-            print("🚫 Invalid amount input. Please enter numeric values for area and quantity.")
-
-    crop_notes = input("[Optional] 📝 Please enter any additional notes about the crop: ").strip()
-
-    # 💵 Get the supplier cost for the crop
-    supplier_cost = get_valid_supplier_cost()
-
-    crops[crop_id] = {
-        'Date planted:': crop_date,
-        'Name of Crop:': crop_name,
-        'Variety:': crop_variety,
-        'Field:': crop_field,
-        'Area:': crop_area,
-        'Quantity': crop_quantity,
-        'Notes': crop_notes,
-        'Supplier Cost (PHP)': supplier_cost
+    expenses[expen_id] = {
+        'Date': date,
+        'Expense Type': expen_type,
+        'Description': expen_desc,
+        'Amount': expen_cost,
+        'Notes': expen_notes
     }
 
-    save_crops(farmer_subfolder)
-    print("✅ Your crop has been added!")
+    save_expenses(farmer_subfolder)
+    print("✅ Expense added successfully. ✅")
 
-# 🌿 Function to view all crops
-def view_crops(farmer_name):
+# Function to edit expense data
+def edit_expense(farmer_subfolder, farmer_name):
+    view_expenses(farmer_name)
     try:
-        farmer_subfolder = make_farmer_folder(farmer_name)
-        if farmer_subfolder:
-            load_crops(farmer_subfolder)
-        else:
-            print("🚫 Farmer folder not found. Exiting crop management.")
+        expen_id = int(input("✏️ Enter the expense ID to edit: "))
+        if expen_id not in expenses:
+            print("❌ Expense not found. ❌")
             return
-    except Exception as e:
-        print(f"🚫 Error loading crops: {e}")
+
+        current_data = expenses[expen_id]
+
+        # Prompt for each field, keeping the existing value if the user skips
+        date = get_valid_date("🗓️ Enter the new date (YYYY-MM-DD) or press Enter to keep the current date: ")
+        expenses[expen_id]['Date'] = date if date else current_data['Date']
+
+        expen_type = input(f"💡 Enter the new expense type [{current_data['Expense Type']}]: ").strip()
+        expenses[expen_id]['Expense Type'] = expen_type if expen_type else current_data['Expense Type']
+
+        expen_desc = input(f"📝 Enter the new description [{current_data['Description']}]: ").strip()
+        expenses[expen_id]['Description'] = expen_desc if expen_desc else current_data['Description']
+
+        amount = input(f"💸 Enter the new amount [{current_data['Amount']}]: ").strip()
+        if amount:
+            try:
+                expenses[expen_id]['Amount'] = float(amount)
+            except ValueError:
+                print("❌ Invalid input for amount. Keeping current value. ❌")
+        else:
+            expenses[expen_id]['Amount'] = current_data['Amount']
+
+        notes = input(f"[Optional] 🗒️ Additional notes [{current_data['Notes'] or 'No notes'}]: ").strip()
+        expenses[expen_id]['Notes'] = notes if notes else current_data['Notes']
+
+        save_expenses(farmer_subfolder)
+        print(f"✅ Expense ID {expen_id} edited successfully. ✅")
+    except ValueError:
+        print("❌ Invalid ID. ❌")
+
+# Function to view all expenses
+def view_expenses(farmer_name):
+    farmer_subfolder = make_farmer_folder(farmer_name)
+    load_expenses(farmer_subfolder)
+
+    if not expenses:
+        print("⚠️ No expenses found. ⚠️")
         return
 
-    print("🌾~~ All Crops ~~")
-
-    if not crops:
-        print("🚫 No crops found.")
-        return
-
-    headers = ["Crop ID", "Date of Planting", "Name of Crop", "Variety", "Field", "Area Planted (hectares)",
-               "Quantity (kg)", "Notes", "Supplier Cost (PHP)"]
-
+    headers = ["ID", "Date", "Expense Type", "Description", "Amount (PHP)", "Notes"]
     table_data = []
 
-    for crop_id, details in crops.items():
-        try:
-            formatted_date = details['Date planted:'].strftime("%Y-%m-%d")
-
-            row = [
-                crop_id,
-                formatted_date,
-                details['Name of Crop:'],
-                details['Variety:'],
-                details['Field:'],
-                details['Area:'],
-                details['Quantity'],
-                details['Notes'] if details['Notes'] else "No notes",
-                details['Supplier Cost (PHP)']
-            ]
-            table_data.append(row)
-        except KeyError as e:
-            print(f"🚫 Error: Missing key {e} in crop ID {crop_id}. Skipping crop.")
-            continue
+    for expen_id, data in expenses.items():
+        row = [
+            expen_id,
+            data['Date'].strftime("%Y-%m-%d"),
+            data['Expense Type'],
+            data['Description'],
+            f"₱{data['Amount']:.2f}",  # Format the amount with PHP symbol
+            data['Notes'] or "No notes"
+        ]
+        table_data.append(row)
 
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
 
-# ✏️ Function to edit crop data
-def edit_crops(farmer_subfolder, farmer_name):
-    view_crops(farmer_name)
+# Function to delete an expense with confirmation
+def delete_expense(farmer_subfolder, farmer_name):
+    view_expenses(farmer_name)
     try:
-        crop_id = int(input("🔢 Enter the crop ID to edit: "))
-        if crop_id not in crops:
-            print("🚫 Crop not found.")
-            return
-
-        current_data = crops[crop_id]
-
-        crop_name = input(f"✏️ Enter the new crop name [{current_data['Name of Crop:']}]: ").strip()
-        crops[crop_id]['Name of Crop:'] = crop_name if crop_name else current_data['Name of Crop:']
-
-        crop_variety = input(f"✏️ Enter the new crop variety [{current_data['Variety:']}]: ").strip()
-        crops[crop_id]['Variety:'] = crop_variety if crop_variety else current_data['Variety:']
-
-        field = input(f"✏️ Enter the new field [{current_data['Field:']}]: ").strip()
-        crops[crop_id]['Field:'] = field if field else current_data['Field:']
-
-        while True:
-            try:
-                area = input(f"✏️ Enter the new area planted [{current_data['Area:']} hectares]: ").strip()
-                area = int(area) if area else current_data['Area:']
-                crops[crop_id]['Area:'] = area
-                break
-            except ValueError:
-                print("🚫 Invalid input for area, it should be numeric.")
-
-        while True:
-            try:
-                quantity = input(f"✏️ Enter the new quantity planted [{current_data['Quantity']} kg]: ").strip()
-                quantity = int(quantity) if quantity else current_data['Quantity']
-                crops[crop_id]['Quantity'] = quantity
-                break
-            except ValueError:
-                print("🚫 Invalid input for quantity, it should be numeric.")
-
-        save_crops(farmer_subfolder)
-        print("✅ Crop data has been updated successfully.")
-    except ValueError:
-        print("🚫 Invalid crop ID. Please enter a valid numeric crop ID.")
-
-# ❌ Function to delete a crop
-def delete_crops(farmer_subfolder, farmer_name):
-    view_crops(farmer_name)
-    try:
-        crop_id = int(input("🔢 Enter the crop ID to delete: "))
-        if crop_id not in crops:
-            print("🚫 Crop not found.")
-            return
-
-        del crops[crop_id]
-        save_crops(farmer_subfolder)
-        print("✅ Crop deleted successfully.")
-    except ValueError:
-        print("🚫 Invalid crop ID. Please enter a valid numeric crop ID.")
-
-# 🗑️ Function to log crop removal
-def log_crop_removal(farmer_subfolder, crop_id, crop_name, farmer_name):
-    removal_log_file = os.path.join(farmer_subfolder, 'crop_removal_log.txt')
-
-    if not os.path.exists(removal_log_file):
-        with open(removal_log_file, 'w') as file:
-            file.write("Username,Role,Removed Date,Crop ID,Crop Name\n")
-
-    with open(removal_log_file, 'a') as file:
-        file.write(f"{farmer_name},Farmer,{datetime.now()},{crop_id},{crop_name}\n")
-    print("✅ Removal logged successfully.")
-
-# 📝 Function to get non-empty input
-def get_non_empty_input(prompt):
-    while True:
-        user_input = input(prompt).strip()
-        if user_input:
-            return user_input
+        expen_id = int(input("❌ Enter the expense ID to delete: "))
+        if expen_id in expenses:
+            # Prompt for confirmation
+            confirmation = input(f"❗ Are you sure you want to delete expense ID {expen_id}? Type 'yes' to confirm: ").strip().lower()
+            if confirmation == "yes":
+                expen_type = expenses[expen_id]['Expense Type']
+                del expenses[expen_id]
+                save_expenses(farmer_subfolder)
+                log_expense_removal(farmer_subfolder, expen_id, expen_type, farmer_name)
+                print(f"✅ Expense ID {expen_id} deleted successfully. ✅")
+            else:
+                print("❌ Deletion canceled. ❌")
         else:
-            print("🚫 Input cannot be empty. Please enter a valid value.")
+            print("❌ Expense not found. ❌")
+    except ValueError:
+        print("❌ Invalid ID. ❌")
 
+# Function to log expense removal
+def log_expense_removal(farmer_subfolder, expen_id, expen_type, farmer_name):
+    log_file_path = os.path.join(farmer_subfolder, 'expense_removal_log.txt')
+    log_entry = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - ID: {expen_id}, Type: {expen_type}, Removed by: {farmer_name}\n"
+    with open(log_file_path, 'a') as log_file:
+        log_file.write(log_entry)
+    print(f"✅ Expense removal logged for ID {expen_id}. ✅")
+
+# Function to get non-empty input from the user
+def get_non_empty_input(prompt):
+    user_input = input(f"{prompt} ")
+    while not user_input.strip():
+        print("❌ Input cannot be empty. ❌")
+        user_input = input(f"{prompt} ")
+    return user_input.strip()
