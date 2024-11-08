@@ -106,9 +106,12 @@ def save_fertilizer(farmer_subfolder):
             scheduled_date = data['Scheduled Date'].strftime("%Y-%m-%d")
             application_date = data['Application Date'].strftime("%Y-%m-%d")
             supplier_cost = data.get('Supplier Cost', 'N/A')
+            # Save notes as an empty string if they are empty
+            notes = data['Notes'] if data['Notes'] else ""
             file.write(
                 f"{fert_id},{scheduled_date},{application_date},{data['Crop Applied to']},{data['Name']},"
-                f"{data['Variety']},{data['Field']},{data['Area']},{data['Quantity']},{supplier_cost},{data['Notes']}\n")
+                f"{data['Variety']},{data['Field']},{data['Area']},{data['Quantity']},{supplier_cost},{notes}\n"
+            )
     print("✅ Fertilizer data saved successfully.")
 
 # ➕ Function to add fertilizer data
@@ -137,9 +140,14 @@ def add_fertilizer(farmer_subfolder, farmer_name):
         return
 
     fert_notes = input("[Optional] Additional notes: ").strip()
+    fert_notes = fert_notes if fert_notes else ""  # Ensure it's an empty string if no input
 
     try:
-        supplier_cost = float(input("Enter the supplier cost per kg (in PHP): ").strip())  # 💵 Specify PHP
+        supplier_cost_input = input("Enter the supplier cost per kg (in PHP): ").strip()
+        if supplier_cost_input:
+            supplier_cost = float(supplier_cost_input)
+        else:
+            supplier_cost = 0.0  # or leave it as a valid entry depending on your requirements
     except ValueError:
         print("❌ Invalid supplier cost. It should be a numeric value.")
         return
