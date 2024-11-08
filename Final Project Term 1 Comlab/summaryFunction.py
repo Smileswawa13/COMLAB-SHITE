@@ -1,11 +1,10 @@
-import os
 import datetime
 from collections import defaultdict
-from tabulate import tabulate
+from userFarmerFunctions import make_farmer_folder
 
 def read_file(file_path):
     if not os.path.exists(file_path):
-        print(f"File not found: {file_path}")
+        print(f"File not found: {file_path}. Skipping...")
         return []
     with open(file_path, 'r') as file:
         return file.readlines()
@@ -33,15 +32,20 @@ def get_sales_and_buyers(sales_file):
     total_quantity_sold = 0
     buyer_count = defaultdict(int)
 
-    for line in read_file(sales_file):
-        sale_id, date, crop_type, quantity_sold, price_per_kg, total_sale, buyer, notes = line.strip().split(',')
-        total_sales += float(total_sale)
-        total_quantity_sold += int(quantity_sold)
-        buyer_count[buyer] += 1
+    # Only process the file if it exists
+    sales_data = read_file(sales_file)
+    if sales_data:  # Proceed if there is data
+        for line in sales_data:
+            sale_id, date, crop_type, quantity_sold, price_per_kg, total_sale, buyer, notes = line.strip().split(',')
+            total_sales += float(total_sale)
+            total_quantity_sold += int(quantity_sold)
+            buyer_count[buyer] += 1
 
+    # Sort buyers by frequency (most frequent first)
     most_frequent_buyers = sorted(buyer_count.items(), key=lambda x: x[1], reverse=True)
 
     return total_sales, total_quantity_sold, most_frequent_buyers
+
 
 
 # Function to calculate total expenses and breakdown by expense type
@@ -50,60 +54,84 @@ def get_expenses(expenses_file, expense_removal_log_file):
     expense_type_breakdown = defaultdict(float)
     expense_removals = []
 
-    for line in read_file(expenses_file):
-        expen_id, date, expen_type, expen_desc, expen_cost, expen_notes = line.strip().split(',')
-        total_expenses += float(expen_cost)
-        expense_type_breakdown[expen_type] += float(expen_cost)
+    # Only process the files if they exist
+    expense_data = read_file(expenses_file)
+    expense_removal_log = read_file(expense_removal_log_file)
 
-    for line in read_file(expense_removal_log_file):
-        timestamp, expen_id, expen_type, removed_by = line.strip().split(' - ')
-        expense_removals.append(f"{timestamp} - {expen_id} {expen_type} Removed by {removed_by}")
+    if expense_data:  # Proceed if there is expense data
+        for line in expense_data:
+            expen_id, date, expen_type, expen_desc, expen_cost, expen_notes = line.strip().split(',')
+            total_expenses += float(expen_cost)
+            expense_type_breakdown[expen_type] += float(expen_cost)
+
+    if expense_removal_log:  # Proceed if there is expense removal data
+        for line in expense_removal_log:
+            try:
+                timestamp, expen_id, expen_type, removed_by = line.strip().split(' - ')
+                expense_removals.append(f"{timestamp} - {expen_id} {expen_type} Removed by {removed_by}")
+            except ValueError:
+                print(f"Skipping invalid line in removal log: {line.strip()}")  # Print invalid lines for debugging
 
     return total_expenses, expense_type_breakdown, expense_removals
 
 
+
 # Function to calculate activity summary (crops, fertilizers, pesticides)
-def get_activity_summary(crops_file, crop_removal_log_file, fertilizer_file, pesticide_file,
-                         fertilizer_removal_log_file, pesticide_removal_log_file):
-    crops_added = len(read_file(crops_file))
-    crops_removed = []
-    fertilizers_used = len(read_file(fertilizer_file))
-    pesticides_used = len(read_file(pesticide_file))
-    fertilizer_removals = []
-    pesticide_removals = []
+def get_activity_summary(crops_file, crop_removal_log_file, fertilizer_file, pesticide_file, fertilizer_removal_log_file, pesticide_removal_log_file):
+    crops_added = 0
+    crops_removed_count = 0
+    fertilizers_used = 0
+    pesticides_used = 0
+    fertilizer_removals_count = 0
+    pesticide_removals_count = 0
 
-    for line in read_file(crop_removal_log_file):
-        timestamp, crop_id, crop_name, removed_by = line.strip().split(' - ')
-        crops_removed.append(f"{timestamp} - {crop_id} {crop_name} Removed by {removed_by}")
+    crops_data = read_file(crops_file)
+    crop_removal_log_data = read_file(crop_removal_log_file)
+    fertilizer_data = read_file(fertilizer_file)
+    pesticide_data = read_file(pesticide_file)
+    fertilizer_removal_data = read_file(fertilizer_removal_log_file)
+    pesticide_removal_data = read_file(pesticide_removal_log_file)
 
-    for line in read_file(fertilizer_removal_log_file):
-        timestamp, fert_id, fert_name, removed_by = line.strip().split(' - ')
-        fertilizer_removals.append(f"{timestamp} - {fert_id} {fert_name} Removed by {removed_by}")
+    if crops_data:
+        crops_added = len(crops_data)
 
-    for line in read_file(pesticide_removal_log_file):
-        timestamp, pestmed_id, name, removed_by = line.strip().split(' - ')
-        pesticide_removals.append(f"{timestamp} - {pestmed_id} {name} Removed by {removed_by}")
+    if crop_removal_log_data:
+        crops_removed_count = len(crop_removal_log_data)  # Count of crop removals
 
-    return crops_added, crops_removed, fertilizers_used, pesticides_used, fertilizer_removals, pesticide_removals
+    if fertilizer_data:
+        fertilizers_used = len(fertilizer_data)
 
+    if pesticide_data:
+        pesticides_used = len(pesticide_data)
+
+    if fertilizer_removal_data:
+        fertilizer_removals_count = len(fertilizer_removal_data)  # Count of fertilizer removals
+
+    if pesticide_removal_data:
+        pesticide_removals_count = len(pesticide_removal_data)  # Count of pesticide removals
+
+    return crops_added, crops_removed_count, fertilizers_used, pesticides_used, fertilizer_removals_count, pesticide_removals_count
 
 # Function to calculate profits (by periods)
 def calculate_profits(sales_file, expenses_file, period='monthly'):
     sales = defaultdict(float)
     expenses = defaultdict(float)
 
-    for line in read_file(sales_file):
-        sale_id, date, crop_type, quantity_sold, price_per_kg, total_sale, buyer, notes = line.strip().split(',')
-        sale_date = parse_date(date)
-        sales[sale_date] += float(total_sale)
+    sales_data = read_file(sales_file)
+    expense_data = read_file(expenses_file)
 
-    for line in read_file(expenses_file):
-        expen_id, date, expen_type, expen_desc, expen_cost, expen_notes = line.strip().split(',')
-        expen_date = parse_date(date)
-        expenses[expen_date] += float(expen_cost)
+    if sales_data:
+        for line in sales_data:
+            sale_id, date, crop_type, quantity_sold, price_per_kg, total_sale, buyer, notes = line.strip().split(',')
+            sale_date = parse_date(date)
+            sales[sale_date] += float(total_sale)
 
-    # Grouping by period
-    start_date = datetime.date.today()
+    if expense_data:
+        for line in expense_data:
+            expen_id, date, expen_type, expen_desc, expen_cost, expen_notes = line.strip().split(',')
+            expen_date = parse_date(date)
+            expenses[expen_date] += float(expen_cost)
+
     period_sales = defaultdict(float)
     period_expenses = defaultdict(float)
 
@@ -130,75 +158,87 @@ def calculate_profits(sales_file, expenses_file, period='monthly'):
     return profits
 
 
+
+
 # Function to get the overall work done
 def get_overall_work(crops_file, expenses_file, fertilizer_file, pesticide_file, sales_file):
-    crop_operations = len(read_file(crops_file))
-    expense_operations = len(read_file(expenses_file))
-    fertilizer_operations = len(read_file(fertilizer_file))
-    pesticide_operations = len(read_file(pesticide_file))
-    sales_operations = len(read_file(sales_file))
+    # Initialize the operation counts
+    crop_operations = 0
+    expense_operations = 0
+    fertilizer_operations = 0
+    pesticide_operations = 0
+    sales_operations = 0
+
+    # Check if each file exists and count operations (lines)
+    if os.path.exists(crops_file):
+        crop_operations = len(read_file(crops_file))
+    else:
+        print(f"Warning: Crops file '{crops_file}' not found. Skipping.")
+
+    if os.path.exists(expenses_file):
+        expense_operations = len(read_file(expenses_file))
+    else:
+        print(f"Warning: Expenses file '{expenses_file}' not found. Skipping.")
+
+    if os.path.exists(fertilizer_file):
+        fertilizer_operations = len(read_file(fertilizer_file))
+    else:
+        print(f"Warning: Fertilizer file '{fertilizer_file}' not found. Skipping.")
+
+    if os.path.exists(pesticide_file):
+        pesticide_operations = len(read_file(pesticide_file))
+    else:
+        print(f"Warning: Pesticide file '{pesticide_file}' not found. Skipping.")
+
+    if os.path.exists(sales_file):
+        sales_operations = len(read_file(sales_file))
+    else:
+        print(f"Warning: Sales file '{sales_file}' not found. Skipping.")
 
     return crop_operations, expense_operations, fertilizer_operations, pesticide_operations, sales_operations
 
 
 # Generate a farmer report
-# Inside the main loop where generate_report is called
+from colorama import Fore, Style
+import emoji
+import os
+from tabulate import tabulate
+
 def generate_report(farmer_name):
-    farmer_folder = f"Farmers\\{farmer_name}"
-    print(f"Searching for folder: {farmer_folder}")
+    # Get the farmer's subfolder path by calling make_farmer_folder
+    farmer_subfolder = make_farmer_folder(farmer_name)
 
-    if os.path.exists(farmer_folder):
-        print(f"Folder found: {farmer_folder}")
-
-        # Example of loading a file and checking its content
-        crop_file = os.path.join(farmer_folder, "crops.txt")
-        if os.path.exists(crop_file):
-            print(f"Found crops file: {crop_file}")
-            with open(crop_file, "r") as f:
-                crops = f.readlines()
-                print(f"Loaded crops: {crops[:5]}")  # Show first 5 lines of crops.txt
-        else:
-            print("Error: crops.txt not found!")
-
-        # You can add other file loading logic here as needed
-
-        # Report generation logic: Show or save the generated report
-        print(f"Generating summary report for {farmer_name}...")
-        # Insert your actual report logic here
-        print("Report generation complete.")
-    else:
-        print(f"Error: Folder {farmer_folder} does not exist.")
-
-    # Wait for the user to press Enter before returning to the menu
-    input("Press Enter to return to the main menu...")
+    if not farmer_subfolder:
+        print("Farmer folder not created, exiting report generation.")
+        return
 
     # File paths for the current farmer
-    crops_file = os.path.join(farmer_folder, 'crops.txt')
-    crop_removal_log_file = os.path.join(farmer_folder, 'crop_removal_log.txt')
-    expenses_file = os.path.join(farmer_folder, 'expenses.txt')
-    expense_removal_log_file = os.path.join(farmer_folder, 'expense_removal_log.txt')
-    fertilizer_file = os.path.join(farmer_folder, 'fertilizer.txt')
-    fertilizer_removal_log_file = os.path.join(farmer_folder, 'fertilizer_removal_log.txt')
-    pesticide_file = os.path.join(farmer_folder, 'pesticide_medicine.txt')
-    pesticide_removal_log_file = os.path.join(farmer_folder, 'pesticide_medicine_removal_log.txt')
-    sales_file = os.path.join(farmer_folder, 'sales.txt')
-    sale_removal_log_file = os.path.join(farmer_folder, 'sale_removal_log.txt')
+    crops_file = os.path.join(farmer_subfolder, 'crops.txt')
+    crop_removal_log_file = os.path.join(farmer_subfolder, 'crop_removal_log.txt')
+    expenses_file = os.path.join(farmer_subfolder, 'expenses.txt')
+    expense_removal_log_file = os.path.join(farmer_subfolder, 'expense_removal_log.txt')
+    fertilizer_file = os.path.join(farmer_subfolder, 'fertilizer.txt')
+    fertilizer_removal_log_file = os.path.join(farmer_subfolder, 'fertilizer_removal_log.txt')
+    pesticide_file = os.path.join(farmer_subfolder, 'pesticide_medicine.txt')
+    pesticide_removal_log_file = os.path.join(farmer_subfolder, 'pesticide_medicine_removal_log.txt')
+    sales_file = os.path.join(farmer_subfolder, 'sales.txt')
+    sale_removal_log_file = os.path.join(farmer_subfolder, 'sale_removal_log.txt')
 
-    # 1. Sales and Buyers Summary
+    # 1. Sales and Buyers Summary (stub functions)
     total_sales, total_quantity_sold, most_frequent_buyers = get_sales_and_buyers(sales_file)
 
-    # 2. Expenses Summary
+    # 2. Expenses Summary (stub functions)
     total_expenses, expense_type_breakdown, expense_removals = get_expenses(expenses_file, expense_removal_log_file)
 
-    # 3. Activity Summary
-    crops_added, crops_removed, fertilizers_used, pesticides_used, fertilizer_removals, pesticide_removals = get_activity_summary(
+    # 3. Activity Summary (stub functions)
+    crops_added, crops_removed_count, fertilizers_used, pesticides_used, fertilizer_removals_count, pesticide_removals_count = get_activity_summary(
         crops_file, crop_removal_log_file, fertilizer_file, pesticide_file, fertilizer_removal_log_file,
         pesticide_removal_log_file)
 
-    # 4. Profits
-    profits = calculate_profits(sales_file, expenses_file, period='monthly')  # Change to other periods as needed
+    # 4. Profits (stub function)
+    profits = calculate_profits(sales_file, expenses_file, period='monthly')
 
-    # 5. Overall Work Done
+    # 5. Overall Work Done (stub functions)
     crop_operations, expense_operations, fertilizer_operations, pesticide_operations, sales_operations = get_overall_work(
         crops_file, expenses_file, fertilizer_file, pesticide_file, sales_file)
 
@@ -212,15 +252,15 @@ def generate_report(farmer_name):
         'Expenses Summary': {
             'Total Expenses': total_expenses,
             'Expense Breakdown': expense_type_breakdown,
-            'Expense Removal Log': expense_removals
+            'Expense Removal Count': len(expense_removals)  # Number of removed expense entries
         },
         'Activity Summary': {
             'Crops Added': crops_added,
-            'Crops Removed': crops_removed,
+            'Crops Removed': crops_removed_count,
             'Fertilizers Used': fertilizers_used,
             'Pesticides Used': pesticides_used,
-            'Fertilizer Removal Log': fertilizer_removals,
-            'Pesticide Removal Log': pesticide_removals
+            'Fertilizer Removal Count': fertilizer_removals_count,
+            'Pesticide Removal Count': pesticide_removals_count
         },
         'Profits': profits,
         'Overall Work Done': {
@@ -236,38 +276,44 @@ def generate_report(farmer_name):
     table_data = []
 
     # Sales and Buyers Summary
-    table_data.append(["Total Sales", f"₱{report['Sales and Buyers Summary']['Total Sales']:,.2f}"])
-    table_data.append(["Total Quantity Sold", f"{report['Sales and Buyers Summary']['Total Quantity Sold']} kg"])
-    table_data.append(["Most Frequent Buyers", ', '.join([f"{buyer}: {count}" for buyer, count in report['Sales and Buyers Summary']['Most Frequent Buyers']])])
+    table_data.append([emoji.emojize(":moneybag:") + " Total Sales", f"{Fore.GREEN}₱{report['Sales and Buyers Summary']['Total Sales']:,.2f}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":weight_lifter:") + " Total Quantity Sold", f"{Fore.CYAN}{report['Sales and Buyers Summary']['Total Quantity Sold']} kg{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":bust_in_silhouette:") + " Most Frequent Buyers", ', '.join([f"{buyer}: {count}" for buyer, count in report['Sales and Buyers Summary']['Most Frequent Buyers']])])
 
     # Expenses Summary
-    table_data.append(["Total Expenses", f"₱{report['Expenses Summary']['Total Expenses']:,.2f}"])
-    table_data.append(["Expense Breakdown", ', '.join([f"{expen_type}: ₱{cost}" for expen_type, cost in report['Expenses Summary']['Expense Breakdown'].items()])])
-    table_data.append(["Expense Removal Log", ', '.join(report['Expenses Summary']['Expense Removal Log'])])
+    table_data.append([emoji.emojize(":euro:") + " Total Expenses", f"{Fore.RED}₱{report['Expenses Summary']['Total Expenses']:,.2f}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":chart_with_upwards_trend:") + " Expense Breakdown", ', '.join([f"{expen_type}: ₱{cost}" for expen_type, cost in report['Expenses Summary']['Expense Breakdown'].items()])])
+    table_data.append([emoji.emojize(":wastebasket:") + " Expense Removal Count", f"{Fore.YELLOW}{report['Expenses Summary']['Expense Removal Count']}{Style.RESET_ALL}"])
 
     # Activity Summary
-    table_data.append(["Crops Added", report['Activity Summary']['Crops Added']])
-    table_data.append(["Crops Removed", ', '.join(report['Activity Summary']['Crops Removed'])])
-    table_data.append(["Fertilizers Used", report['Activity Summary']['Fertilizers Used']])
-    table_data.append(["Pesticides Used", report['Activity Summary']['Pesticides Used']])
-    table_data.append(["Fertilizer Removal Log", ', '.join(report['Activity Summary']['Fertilizer Removal Log'])])
-    table_data.append(["Pesticide Removal Log", ', '.join(report['Activity Summary']['Pesticide Removal Log'])])
+    table_data.append([emoji.emojize(":seedling:") + " Crops Added", f"{Fore.GREEN}{report['Activity Summary']['Crops Added']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":x:") + " Crops Removed", f"{Fore.RED}{report['Activity Summary']['Crops Removed']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":seedling:") + " Fertilizers Used", f"{Fore.YELLOW}{report['Activity Summary']['Fertilizers Used']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":herb:") + " Pesticides Used", f"{Fore.MAGENTA}{report['Activity Summary']['Pesticides Used']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":recycle:") + " Fertilizer Removal Count", f"{Fore.RED}{report['Activity Summary']['Fertilizer Removal Count']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":recycle:") + " Pesticide Removal Count", f"{Fore.RED}{report['Activity Summary']['Pesticide Removal Count']}{Style.RESET_ALL}"])
 
-    # Profits
+    # In the table generation part of your code
     for period, profit in report['Profits'].items():
-        table_data.append([f"Profit ({period.strftime('%Y-%m')})", f"₱{profit:,.2f}"])
+        # Ensure the period is a datetime object, then format it using strftime
+        if isinstance(period, datetime.date):
+            table_data.append([emoji.emojize(":chart_with_upwards_trend:") + f" Profit ({period.strftime('%Y-%m')})", f"{Fore.GREEN}₱{profit:,.2f}{Style.RESET_ALL}"])
+        else:
+            table_data.append([emoji.emojize(":chart_with_upwards_trend:") + f" Profit ({period})", f"{Fore.GREEN}₱{profit:,.2f}{Style.RESET_ALL}"])  # If period is a string
 
     # Overall Work Done
-    table_data.append(["Crop Operations", report['Overall Work Done']['Crop Operations']])
-    table_data.append(["Expense Operations", report['Overall Work Done']['Expense Operations']])
-    table_data.append(["Fertilizer Operations", report['Overall Work Done']['Fertilizer Operations']])
-    table_data.append(["Pesticide Operations", report['Overall Work Done']['Pesticide Operations']])
-    table_data.append(["Sales Operations", report['Overall Work Done']['Sales Operations']])
+    table_data.append([emoji.emojize(":hammer_and_wrench:") + " Crop Operations", f"{Fore.CYAN}{report['Overall Work Done']['Crop Operations']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":clipboard:") + " Expense Operations", f"{Fore.CYAN}{report['Overall Work Done']['Expense Operations']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":seedling:") + " Fertilizer Operations", f"{Fore.CYAN}{report['Overall Work Done']['Fertilizer Operations']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":herb:") + " Pesticide Operations", f"{Fore.CYAN}{report['Overall Work Done']['Pesticide Operations']}{Style.RESET_ALL}"])
+    table_data.append([emoji.emojize(":shopping_cart:") + " Sales Operations", f"{Fore.CYAN}{report['Overall Work Done']['Sales Operations']}{Style.RESET_ALL}"])
 
+    # Print the table
     print(tabulate(table_data, headers=["Metric", "Value"], tablefmt="grid"))
 
-    # After report generation, return to the menu or call any final step
-    print("Report generated successfully!")
-    return  # This ensures we don't loop back to asking for input again.
+    print(f"{Fore.GREEN}Report generated successfully!{Style.RESET_ALL}")
+    return
+
+
 
 
