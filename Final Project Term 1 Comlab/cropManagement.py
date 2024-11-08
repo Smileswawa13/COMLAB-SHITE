@@ -34,14 +34,14 @@ def crop_menu(farmer_name):
     farmer_subfolder = make_farmer_folder(farmer_name)
 
     if not farmer_subfolder:
-        print("🚫 Farmer folder not created, exiting crop management.")
+        print("\033[91m🚫 Farmer folder not created, exiting crop management.\033[0m")
         return
 
     # 🗂️ Load crops from the file
     load_crops(farmer_subfolder)
 
     while True:
-        print(f"🌾~~Crop Management - Farmer {farmer_name}~~🌾")
+        print(f"\033[92m🌾~~Crop Management - Farmer {farmer_name}~~🌾\033[0m")
         options = {
             "🌱 Add Crops": add_crops,
             "✏️ Edit Crops": edit_crops,
@@ -51,32 +51,31 @@ def crop_menu(farmer_name):
         }
 
         for index, (action, key) in enumerate(options.items(), 1):
-            print(f"{index}. {action}")
-        print(f"🔄 Which do you want to do, farmer {farmer_name}?")
+            print(f"\033[93m{index}. {action}\033[0m")  # Yellow for action choices
+        print(f"\033[92m🌻 What would you like to do, farmer {farmer_name}? 🌻\033[0m")
 
         try:
-            action = int(input("Enter here using the corresponding number: "))
+            action = int(input("\033[94m🌾 Enter here using the corresponding number: 🌾\033[0m"))  # Blue for input prompt
 
             if 1 <= action <= 4:
                 selected_action = list(options.keys())[action - 1]
                 selected_function = options[selected_action]
-                print(f"▶️ Executing...'{selected_action}'.")
+                print(f"\033[93m🌱 Executing...'{selected_action}' 🌾\033[0m.")  # Yellow for execution message
 
                 if callable(selected_function):
-                    # 🔑 Check if the crop function has an argument
                     if selected_function == view_crops:
                         selected_function(farmer_name)
                     else:
                         selected_function(farmer_subfolder, farmer_name)
 
             elif action == 5:
-                print("🚪 Going Back to Main Menu")
+                print("\033[92m🚪 Going Back to Main Menu 🚪\033[0m")  # Green for going back message
                 break
 
             else:
-                print("🚫 Your input is not in the corresponding choices. Please enter a valid number between 1 and 5.")
+                print("\033[91m❌ Please enter a valid number between 1 and 5. ❌\033[0m")  # Red for invalid input
         except ValueError:
-            print("🚫 Please enter a valid number.")
+            print("\033[91m❌ Please enter a valid number. ❌\033[0m")  # Red for invalid input
 
 # 📂 Function to load crops from a file
 def load_crops(farmer_subfolder):
@@ -100,9 +99,9 @@ def load_crops(farmer_subfolder):
                     }
                 except ValueError as e:
                     print(f"🚫 Error loading crop data: {e}. Skipping line.")
-        print("✅ Crops loaded successfully.")
+        print("\033[92m✅ Crops loaded successfully.\033[0m")
     else:
-        print("⚠️ No crops file found. Starting with an empty list.")
+        print("\033[93m⚠️ No crops file found. Starting with an empty list.\033[0m")
 
 # 💾 Function to save crops into the file
 def save_crops(farmer_subfolder):
@@ -114,35 +113,35 @@ def save_crops(farmer_subfolder):
             file.write(f"{crop_id},{formatted_date},{crop_data['Name of Crop:']},"
                        f"{crop_data['Variety:']},{crop_data['Field:']},{crop_data['Area:']},"
                        f"{crop_data['Quantity']},{crop_data['Notes']},{crop_data['Supplier Cost (PHP)']}\n")
-    print("✅ Crops saved successfully.")
+    print("\033[92m✅ Crops saved successfully.\033[0m")
 
 # 🌱 Function to add crops
 def add_crops(farmer_subfolder, farmer_name):
-    print("🌾~~ Adding new crop ~~")
+    print("\033[92m🌾~~ Adding new crop ~~\033[0m")
     try:
-        crop_id = int(input("🔢 Please enter the crop id: "))
+        crop_id = int(input("\033[93m🔢 Please enter the crop id: \033[0m"))
     except ValueError:
-        print("🚫 Invalid crop ID. It should be a numeric value.")
+        print("\033[91m🚫 Invalid crop ID. It should be a numeric value.\033[0m")
         return
 
     if crop_id in crops:
-        print(f"🚫 Crop with ID '{crop_id}' already exists!")
+        print(f"\033[91m🚫 Crop with ID '{crop_id}' already exists!\033[0m")
         return
 
     crop_date = get_valid_date()  # 📅 This returns a datetime object
-    crop_name = get_non_empty_input("🌱 Please enter the crop name: ").strip()
-    crop_variety = get_non_empty_input("🌾 Please enter the crop variety: ").strip()
-    crop_field = get_non_empty_input("📍 Please enter in which field the crop was planted: ").strip()
+    crop_name = get_non_empty_input("\033[94m🌱 Please enter the crop name: \033[0m").strip()
+    crop_variety = get_non_empty_input("\033[94m🌾 Please enter the crop variety: \033[0m").strip()
+    crop_field = get_non_empty_input("\033[94m📍 Please enter in which field the crop was planted: \033[0m").strip()
 
     while True:
         try:
-            crop_area = int(input("📏 Please enter the area planted in hectares: ").strip())
-            crop_quantity = int(input("🌾 Please enter the amount of seeds planted in kilograms: ").strip())
+            crop_area = int(input("\033[94m📏 Please enter the area planted in hectares: \033[0m").strip())
+            crop_quantity = int(input("\033[94m🌾 Please enter the amount of seeds planted in kilograms: \033[0m").strip())
             break
         except ValueError:
-            print("🚫 Invalid amount input. Please enter numeric values for area and quantity.")
+            print("\033[91m🚫 Invalid amount input. Please enter numeric values for area and quantity.\033[0m")
 
-    crop_notes = input("[Optional] 📝 Please enter any additional notes about the crop: ").strip()
+    crop_notes = input("\033[92m[Optional] 📝 Please enter any additional notes about the crop: \033[0m").strip()
 
     # 💵 Get the supplier cost for the crop
     supplier_cost = get_valid_supplier_cost()
@@ -159,7 +158,7 @@ def add_crops(farmer_subfolder, farmer_name):
     }
 
     save_crops(farmer_subfolder)
-    print("✅ Your crop has been added!")
+    print("\033[92m✅ Your crop has been added!\033[0m")
 
 # 🌿 Function to view all crops
 def view_crops(farmer_name):
@@ -168,121 +167,161 @@ def view_crops(farmer_name):
         if farmer_subfolder:
             load_crops(farmer_subfolder)
         else:
-            print("🚫 Farmer folder not found. Exiting crop management.")
+            print("\033[91m🚫 Farmer folder not found. Exiting crop management.\033[0m")
             return
     except Exception as e:
-        print(f"🚫 Error loading crops: {e}")
+        print(f"\033[91m🚫 Error loading crops: {e}\033[0m")
         return
 
-    print("🌾~~ All Crops ~~")
+    print("\033[92m🌾~~ All Crops ~~\033[0m")
 
     if not crops:
-        print("🚫 No crops found.")
+        print("\033[91m🚫 No crops found.\033[0m")
         return
 
-    headers = ["Crop ID", "Date of Planting", "Name of Crop", "Variety", "Field", "Area Planted (hectares)",
-               "Quantity (kg)", "Notes", "Supplier Cost (PHP)"]
+    headers = ["Crop ID", "Date of Planting", "Name of Crop", "Variety", "Field", "Area Planted (hectares)", "Quantity (kg)", "Notes", "Supplier Cost (PHP)"]
+    table = []
 
-    table_data = []
+    for crop_id, crop_data in crops.items():
+        table.append([crop_id,
+                      crop_data['Date planted:'].strftime("%Y-%m-%d"),
+                      crop_data['Name of Crop:'],
+                      crop_data['Variety:'],
+                      crop_data['Field:'],
+                      crop_data['Area:'],
+                      crop_data['Quantity'],
+                      crop_data['Notes'],
+                      crop_data['Supplier Cost (PHP)']])
 
-    for crop_id, details in crops.items():
-        try:
-            formatted_date = details['Date planted:'].strftime("%Y-%m-%d")
+    print(tabulate(table, headers, tablefmt="fancy_grid"))
 
-            row = [
-                crop_id,
-                formatted_date,
-                details['Name of Crop:'],
-                details['Variety:'],
-                details['Field:'],
-                details['Area:'],
-                details['Quantity'],
-                details['Notes'] if details['Notes'] else "No notes",
-                details['Supplier Cost (PHP)']
-            ]
-            table_data.append(row)
-        except KeyError as e:
-            print(f"🚫 Error: Missing key {e} in crop ID {crop_id}. Skipping crop.")
-            continue
-
-    print(tabulate(table_data, headers=headers, tablefmt="grid"))
-
-# ✏️ Function to edit crop data
+# ✏️ Function to edit crop details
 def edit_crops(farmer_subfolder, farmer_name):
-    view_crops(farmer_name)
+    print("\033[92m🌾~~ Editing crop ~~\033[0m")
+
     try:
-        crop_id = int(input("🔢 Enter the crop ID to edit: "))
-        if crop_id not in crops:
-            print("🚫 Crop not found.")
-            return
-
-        current_data = crops[crop_id]
-
-        crop_name = input(f"✏️ Enter the new crop name [{current_data['Name of Crop:']}]: ").strip()
-        crops[crop_id]['Name of Crop:'] = crop_name if crop_name else current_data['Name of Crop:']
-
-        crop_variety = input(f"✏️ Enter the new crop variety [{current_data['Variety:']}]: ").strip()
-        crops[crop_id]['Variety:'] = crop_variety if crop_variety else current_data['Variety:']
-
-        field = input(f"✏️ Enter the new field [{current_data['Field:']}]: ").strip()
-        crops[crop_id]['Field:'] = field if field else current_data['Field:']
-
-        while True:
-            try:
-                area = input(f"✏️ Enter the new area planted [{current_data['Area:']} hectares]: ").strip()
-                area = int(area) if area else current_data['Area:']
-                crops[crop_id]['Area:'] = area
-                break
-            except ValueError:
-                print("🚫 Invalid input for area, it should be numeric.")
-
-        while True:
-            try:
-                quantity = input(f"✏️ Enter the new quantity planted [{current_data['Quantity']} kg]: ").strip()
-                quantity = int(quantity) if quantity else current_data['Quantity']
-                crops[crop_id]['Quantity'] = quantity
-                break
-            except ValueError:
-                print("🚫 Invalid input for quantity, it should be numeric.")
-
-        save_crops(farmer_subfolder)
-        print("✅ Crop data has been updated successfully.")
+        crop_id = int(input("\033[93m🔢 Enter the crop ID to edit: \033[0m"))
     except ValueError:
-        print("🚫 Invalid crop ID. Please enter a valid numeric crop ID.")
+        print("\033[91m🚫 Invalid crop ID. Please enter a numeric value.\033[0m")
+        return
+
+    if crop_id not in crops:
+        print(f"\033[91m🚫 No crop found with ID '{crop_id}'. Please check the ID and try again.\033[0m")
+        return
+
+    crop = crops[crop_id]
+    print(f"\033[92m🌾 Editing crop with ID: {crop_id} 🌾\033[0m")
+    print(f"\033[94mCurrent details for crop '{crop['Name of Crop:']}':\033[0m")
+    print(f"\033[94mDate planted: {crop['Date planted:'].strftime('%Y-%m-%d')}\033[0m")
+    print(f"\033[94mVariety: {crop['Variety:']}\033[0m")
+    print(f"\033[94mField: {crop['Field:']}\033[0m")
+    print(f"\033[94mArea planted: {crop['Area:']} hectares\033[0m")
+    print(f"\033[94mQuantity planted: {crop['Quantity']} kg\033[0m")
+    print(f"\033[94mNotes: {crop['Notes']}\033[0m")
+    print(f"\033[94mSupplier cost: PHP {crop['Supplier Cost (PHP)']}\033[0m")
+
+    # 📝 Allow changes to specific fields
+    crop_name = get_non_empty_input("\033[94m🌱 New crop name (leave empty to keep current): \033[0m").strip()
+    crop_variety = get_non_empty_input("\033[94m🌾 New crop variety (leave empty to keep current): \033[0m").strip()
+    crop_field = get_non_empty_input("\033[94m📍 New field (leave empty to keep current): \033[0m").strip()
+
+    while True:
+        try:
+            crop_area = input("\033[94m📏 New area planted in hectares (leave empty to keep current): \033[0m").strip()
+            crop_quantity = input("\033[94m🌾 New quantity planted in kilograms (leave empty to keep current): \033[0m").strip()
+
+            if crop_area:
+                crop_area = int(crop_area)
+            else:
+                crop_area = crop['Area:']
+
+            if crop_quantity:
+                crop_quantity = int(crop_quantity)
+            else:
+                crop_quantity = crop['Quantity']
+
+            break
+        except ValueError:
+            print("\033[91m🚫 Invalid input for area or quantity. Please enter valid numeric values.\033[0m")
+
+    crop_notes = input("\033[92m[Optional] 📝 New notes (leave empty to keep current): \033[0m").strip()
+
+    # 💵 Update supplier cost if necessary
+    supplier_cost = input("\033[92m💵 New supplier cost (leave empty to keep current): \033[0m").strip()
+    if supplier_cost:
+        try:
+            supplier_cost = float(supplier_cost)
+        except ValueError:
+            print("\033[91m🚫 Invalid supplier cost. Keeping the current value.\033[0m")
+            supplier_cost = crop['Supplier Cost (PHP)']
+    else:
+        supplier_cost = crop['Supplier Cost (PHP)']
+
+    # Apply changes
+    if crop_name:
+        crop['Name of Crop:'] = crop_name
+    if crop_variety:
+        crop['Variety:'] = crop_variety
+    if crop_field:
+        crop['Field:'] = crop_field
+    crop['Area:'] = crop_area
+    crop['Quantity'] = crop_quantity
+    if crop_notes:
+        crop['Notes'] = crop_notes
+    crop['Supplier Cost (PHP)'] = supplier_cost
+
+    save_crops(farmer_subfolder)
+    print("\033[92m✅ Crop details updated successfully!\033[0m")
 
 # ❌ Function to delete a crop
 def delete_crops(farmer_subfolder, farmer_name):
-    view_crops(farmer_name)
-    try:
-        crop_id = int(input("🔢 Enter the crop ID to delete: "))
-        if crop_id not in crops:
-            print("🚫 Crop not found.")
-            return
+    print("\033[92m🌾~~ Deleting a crop ~~\033[0m")
 
+    try:
+        crop_id = int(input("\033[93m🔢 Enter the crop ID to delete: \033[0m"))
+    except ValueError:
+        print("\033[91m🚫 Invalid crop ID. Please enter a numeric value.\033[0m")
+        return
+
+    if crop_id not in crops:
+        print(f"\033[91m🚫 No crop found with ID '{crop_id}'. Please check the ID and try again.\033[0m")
+        return
+
+    # Get the crop name to log the removal
+    crop_name = crops[crop_id]['Name of Crop:']
+
+    # Confirm deletion
+    confirmation = input(f"\033[94mAre you sure you want to delete crop with ID '{crop_id}'? (y/n): \033[0m").strip().lower()
+    if confirmation == 'y':
+        # Log the removal before deleting
+        crop_removal_log(farmer_subfolder, crop_id, crop_name, farmer_name)
+
+        # Delete the crop from the crops dictionary
         del crops[crop_id]
         save_crops(farmer_subfolder)
-        print("✅ Crop deleted successfully.")
-    except ValueError:
-        print("🚫 Invalid crop ID. Please enter a valid numeric crop ID.")
+
+        print(f"\033[92m✅ Crop with ID '{crop_id}' has been deleted.\033[0m")
+    else:
+        print("\033[93m❌ Deletion cancelled.\033[0m")
 
 # 🗑️ Function to log crop removal
-def log_crop_removal(farmer_subfolder, crop_id, crop_name, farmer_name):
+def crop_removal_log(farmer_subfolder, crop_id, crop_name, farmer_name):
+    # Define the path for the log file
     removal_log_file = os.path.join(farmer_subfolder, 'crop_removal_log.txt')
 
-    if not os.path.exists(removal_log_file):
-        with open(removal_log_file, 'w') as file:
-            file.write("Username,Role,Removed Date,Crop ID,Crop Name\n")
-
+    # Append the removal log with the farmer's details
     with open(removal_log_file, 'a') as file:
         file.write(f"{farmer_name},Farmer,{datetime.now()},{crop_id},{crop_name}\n")
-    print("✅ Removal logged successfully.")
 
-# 📝 Function to get non-empty input
+    # Notify that the removal has been logged successfully
+    print("\033[92m✅ Removal logged successfully.\033[0m")
+
+# 📩 Function to handle non-empty inputs (for names, variety, etc.)
 def get_non_empty_input(prompt):
     while True:
         user_input = input(prompt).strip()
         if user_input:
             return user_input
         else:
-            print("🚫 Input cannot be empty. Please enter a valid value.")
+            print("\033[91m🚫 Input cannot be empty. Please provide a valid input.\033[0m")
 
