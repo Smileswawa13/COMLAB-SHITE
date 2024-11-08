@@ -21,7 +21,7 @@ from userFarmerFunctions import make_farmer_folder
 import cropManagement
 
 # Title and descriptions
-title = "AGRI-MEMORY!"
+title = " 📝 AGRI-MEMORY! 📝"
 subtitle = "Created by:"
 names = ["Neil Justin V. Bermoy", "Raffy A. Panawidan", "Neil M. Olbes", "Robert Paul C. Nery"]
 description = """Welcome to Your Very Own Digital Farming Logbook! 📔🌱
@@ -81,51 +81,61 @@ def main():
     print("\033[1;37m" + separator.center(width) + "\033[0m")
     print(f"\nHello farmer {farmer_name}! How do you want to proceed?")
 
-    # Main program choices
-    choices = {
-        "Crop Management": cropManagement.crop_menu,
-        "Fertilizer Management": fertManagement.fertilizer_menu,
-        "Pesticide and Disease Management": pestdieManagement.pesticide_medicine_menu,
-        "Harvest Management": harvestManagement.harvest_menu,
-        "Maintenance and Expenses Management": expensesManagement.expenses_menu,
-        "Sales Management": salesManagement.sales_menu,
-        "Profit Calculation": profitManagement.generate_report,
-        "Summary Report": summaryFunction.generate_report,
-        "Quit Agri-Memory?": exit
-    }
-
-    # Main loop with bordered choices
+    # Main loop with if-else structure for choices
     while True:
         print("\n\033[1;34mAGRI-MEMORY FEATURES!\033[0m")  # Blue heading
         print("\033[1;37m" + "+" + "-" * (width - 2) + "+" + "\033[0m")  # Top border
-        for index, (management, _) in enumerate(choices.items(), 1):
-            print(f"\033[1;37m| {index}. {management.ljust(width - 4)} | \033[0m")  # Choices with border
+
+        # Display options manually without using a dictionary
+        print("\033[1;37m| 1. Crop Management".ljust(width - 4) + " | \033[0m")  # Crop Management
+        print("\033[1;37m| 2. Fertilizer Management".ljust(width - 4) + " | \033[0m")  # Fertilizer Management
+        print("\033[1;37m| 3. Pesticide and Disease Management".ljust(width - 4) + " | \033[0m")  # Pesticide Management
+        print("\033[1;37m| 4. Harvest Management".ljust(width - 4) + " | \033[0m")  # Harvest Management
+        print("\033[1;37m| 5. Maintenance and Expenses Management".ljust(width - 4) + " | \033[0m")  # Expenses Management
+        print("\033[1;37m| 6. Sales Management".ljust(width - 4) + " | \033[0m")  # Sales Management
+        print("\033[1;37m| 7. Profit Calculation".ljust(width - 4) + " | \033[0m")  # Profit Calculation
+        print("\033[1;37m| 8. Summary Report".ljust(width - 4) + " | \033[0m")  # Summary Report
+        print("\033[1;37m| 9. Quit Agri-Memory?".ljust(width - 4) + " | \033[0m")  # Quit Option
         print("\033[1;37m" + "+" + "-" * (width - 2) + "+" + "\033[0m")  # Bottom border
         print("\033[1;33mWhat do you want to do, Farmer? 🌾\033[0m")  # Yellow question
 
-        try:
-            action = int(input("Enter here using the corresponding number: "))
-            if 1 <= action <= len(choices):
-                selected_action = list(choices.keys())[action - 1]
-                selected_function = choices[selected_action]
-                print(f"Opening... '{selected_action}'.")
-                if callable(selected_function):
-                    selected_function(farmer_name)
-                else:
-                    print(f"Error: {selected_action} is not callable.")
-            else:
-                print("Please select a valid option.")
-        except ValueError:
-            print("Please enter a valid number.")
+        # Main code for action selection
+        action_input = input("Enter here using the corresponding number: ").strip()  # User selects an action number
 
-# Utility function for non-empty input
-def get_non_empty_input(prompt):
-    while True:
-        user_input = input(prompt).strip()
-        if user_input:
-            return user_input
+        if action_input.isdigit():
+            action = int(action_input)  # Convert input to integer
+
+            if action == 1:
+                print("Opening... 'Crop Management'.")
+                cropManagement.crop_menu(farmer_name)
+            elif action == 2:
+                print("Opening... 'Fertilizer Management'.")
+                fertManagement.fertilizer_menu(farmer_name)
+            elif action == 3:
+                print("Opening... 'Pesticide and Disease Management'.")
+                pestdieManagement.pesticide_medicine_menu(farmer_name)
+            elif action == 4:
+                print("Opening... 'Harvest Management'.")
+                harvestManagement.harvest_menu(farmer_name)
+            elif action == 5:
+                print("Opening... 'Maintenance and Expenses Management'.")
+                expensesManagement.expenses_menu(farmer_name)
+            elif action == 6:
+                print("Opening... 'Sales Management'.")
+                salesManagement.sales_menu(farmer_name)
+            elif action == 7:
+                print("Opening... 'Profit Calculation'.")
+                profitManagement.generate_report(farmer_name)
+            elif action == 8:
+                print("Opening... 'Summary Report'.")
+                summaryFunction.generate_report(farmer_name)
+            elif action == 9:
+                print("Exiting Agri-Memory.")
+                exit()  # Exit the program
+            else:
+                print("\033[1;31mPlease select a valid option between 1 and 9.\033[0m")  # Invalid range
         else:
-            print("Input cannot be empty. Please try again.")
+            print("\033[1;31mPlease enter a valid number.\033[0m")  # Invalid input type
 
 # The holder of reality
 if __name__ == "__main__":
