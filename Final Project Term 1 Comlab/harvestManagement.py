@@ -31,11 +31,11 @@ def harvest_menu(farmer_name):
     while True:
         print(f"\033[92m🌱~~ Harvest Management - Farmer {farmer_name} ~~🌱\033[0m")  # Green for main menu
         options = {
-            "Add Harvest 🌾": add_harvest,
-            "Edit Harvest ✏️": edit_harvest,
-            "View Harvests 📋": view_harvests,
-            "Delete Harvest 🗑️": delete_harvest,
-            "Quit Harvest Management 🚪": None
+            "🌾Add Harvest": add_harvest,
+            "✏️Edit Harvest": edit_harvest,
+            "📋View Harvests": view_harvests,
+            "🗑 Delete Harvest ️": delete_harvest,
+            "🚪Quit Harvest Management": None
         }
 
         for index, (action, key) in enumerate(options.items(), 1):
