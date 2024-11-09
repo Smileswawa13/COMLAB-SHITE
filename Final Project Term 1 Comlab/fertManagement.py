@@ -70,33 +70,37 @@ def load_fertilizer(farmer_subfolder):
                 data = line.strip().split(",")
                 try:
                     fert_id = int(data[0])
-                    # Safely handle Supplier Cost (set to 0.0 if invalid or empty)
+                    
+                    # Scheduled and application dates
+                    scheduled_date = datetime.strptime(data[1], "%Y-%m-%d")
+                    application_date = datetime.strptime(data[2], "%Y-%m-%d")
+                    
+                    # Load and parse the supplier cost
                     supplier_cost = 0.0
-                    if data[10] and data[10] != 'N/A':  # Check if it's not empty or 'N/A'
+                    if data[9].strip():  # Check if there's content at index 9
                         try:
-                            supplier_cost = float(data[10])
+                            supplier_cost = float(data[9])
                         except ValueError:
-                            print(
-                                f"❌ Oops! Invalid supplier cost value for Fertilizer ID {fert_id}. Setting it to 0.0 🌱💸")
+                            print(f"❌ Invalid supplier cost for Fertilizer ID {fert_id}. Setting to 0.0.")
 
+                    # Add fertilizer data to the dictionary
                     fertilizer[fert_id] = {
-                        'Scheduled Date': datetime.strptime(data[1], "%Y-%m-%d"),
-                        'Application Date': datetime.strptime(data[2], "%Y-%m-%d"),
+                        'Scheduled Date': scheduled_date,
+                        'Application Date': application_date,
                         'Crop Applied to': data[3],
                         'Name': data[4],
                         'Variety': data[5],
                         'Field': data[6],
                         'Area': int(data[7]),
                         'Quantity': int(data[8]),
-                        'Supplier Cost': supplier_cost,  # Safely assign supplier cost
-                        'Notes': data[11] if len(data) > 11 else ""
+                        'Supplier Cost': supplier_cost,
+                        'Notes': data[10] if len(data) > 10 else ""
                     }
-                except ValueError as e:
-                    print(f"❌ Error loading fertilizer data for line: {e}. Skipping this one... 😓")
+                except (ValueError, IndexError) as e:
+                    print(f"❌ Error loading fertilizer data for line: {line}. Skipping this one... 😓")
         print("✅ Fertilizers loaded successfully! Your digital farm is ready to go! 🌾🚜")
     else:
         print("🚨 No fertilizer file found. Starting with an empty list. Please check your files! 📂❌")
-
 
 # 💾 Function to save fertilizer data to a file
 def save_fertilizer(farmer_subfolder):
@@ -258,9 +262,7 @@ def edit_fertilizer(farmer_subfolder, farmer_name):
 
 # 👀 Function to view all fertilizers
 def view_fertilizer(farmer_name):
-    print("🌱~~ Editing Fertilizer ~~🌱")
-    farmer_subfolder = make_farmer_folder(farmer_name)
-    load_fertilizer(farmer_subfolder)
+    print(f"🌱~~ Viewing Fertilizer Data for {farmer_name} ~~🌱")
 
     if not fertilizer:
         print("❌ No fertilizers found.")
