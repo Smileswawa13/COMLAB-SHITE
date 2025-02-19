@@ -1,0 +1,75 @@
+==============STAGE 1 DIALOGUE==============
+
+> BEFORE THE LEVEL
+
+Teacher: Hello Everyone, there is an announcement from the School that there will be a contest against different schools.
+	 Students who get 3.0 in all subjects are eligible to become the one who will compete for the school.
+
+Classmate 1: Wow, sounds like someone is good for this.
+Classmate 2: It's her! I heard she writes books and magazines!
+You: (Maybe I should try it out since I have done a lot of online argume- I mean typing games before)
+The Rival: I guess I can do this, I just need to be the one to become the highest.
+You: (One problem, our school famous book and magazine author.) Hmmm I wonder if I should do it..
+Classmate 2: Is this guy really want to beat her?
+Classmate 1: *Whispers to Classmate 1* Hey, lets sabotage his projects to make him fail a subject.
+
+> AFTER THE LEVEL
+
+Teacher: The school has chosen <You> to be the one who will compete for the contest!
+
+Classmate 2: Seriously? He still passed?
+The Rival: I guess it is what it is. *Shrugs*
+Classmate 1: That's it? You are just going to give up? I'll confront him and force him to forfe-
+The Rival: Enough! I don't want any more fame from winning the competition and exposing my pen name.
+Classmate 1: Oh. Sorry..
+
+==============STAGE 2 DIALOGUE==============
+
+> BEFORE THE LEVEL
+
+*At the day of the competition*
+
+Host: Another day another competition for all of the contestants! But this day will be the battle between all CEA schools!
+
+You: These people are well known writers! I wonder if I have a chance.
+Another Contestant: Oh a new guy! Where is that famous girl in your school? You beat her?
+You: Uhm. Yeah I guess?
+Another Contestant: What a joke! You? Beating the best in this branch? That just gives me more chance to win!
+You: Uhuh... Okay.
+
+> AFTER THE LEVEL
+
+Host: And the winner is....
+      *Drum Roll*
+Host: <You>!!
+      *Applause*
+Host: A new challenger won in this branch and will now compete for the finals against other college branches!
+
+Another Contestant: How?! I was second place again!! Just who are you!?
+You: I am just a person who wanted to participate in a contest.
+Another Contestant: Beginners luck isn't it? Next time, just you wait!
+
+==============STAGE 3 DIALOGUE==============
+
+> BEFORE THE LEVEL 
+
+*At the finals*
+
+Host: Today is the final day for this competition! This is the showdown between different college branches as they fight to become
+      this year's typing champion!
+You: There's so many people watching today..
+CSIS Contestant: It's bad news for you freshman, all of us have years of experience in typing. You are no match against us.
+You: I don't know, maybe I do, maybe I don't.
+CSIS Contestant: You have some guts to say that from a top ranker. Good luck to you freshman.
+You: Okay...
+
+> AFTER THE LEVEL
+
+Host: The scores has been settled, and we have the results.
+Host: Let us start with the 3rd runner up...
+Host: The 3rd runner up for this contest is.... The College of Accountancy! Lets have a round of applause!
+Host: The 2nd runner up will be.... The College of Computer Arts and Sciences! Lets have a round of applause!
+Host: The Champion for this year's contest... Well that is indeed surprising. The challenger of College of Architecture and Engineering!
+Host: Despite being a college freshmen, they sure did dominate this contest! Let's have a round of applause!
+
+CSIS Contestant: Damn.. 1st Runner Up Again? I guess the engineering are really good with typing.
