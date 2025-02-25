@@ -189,7 +189,7 @@ class Game(object):
         self.width, self.height = self.size = size
         self.surf = Surface(size)
 
-        self.prompt_font = get_font(40) # This font it also used for the dangling words, so the name is confusing
+        self.prompt_font = get_font(40) # This font it also used for the dangling tutorial_words, so the name is confusing
         self.prompt_font_height = self.prompt_font.size("Test")[1]
         self.prompt_content = ''
 
@@ -311,11 +311,11 @@ class Game(object):
 
 
             for word, meta in list(self.current_words.items()):
-                """ math.cos is used to make the words move softly and delicately like
+                """ math.cos is used to make the tutorial_words move softly and delicately like
                 ''' a leaf traveling in the wind an autum..... no. I don't feel very well, I feel like..
                 ''' like I'm not me anymore, HELP ME PLEASE, IF YOU'RE OUT THERE
                 '''
-                ''' The multipliers on the result are pretty arbitrary, just to make the words move at the
+                ''' The multipliers on the result are pretty arbitrary, just to make the tutorial_words move at the
                 ''' right speed.
                 """
                 y = (meta[1]*word_speed) + abs(math.cos(meta[1]*3)*10)

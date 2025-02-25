@@ -42,3 +42,25 @@ class Button():
                 self.text = self.font.render(self.text_input, True, self.base_color)
         except Exception as e:
             print(f"Error changing color: {e}")
+
+class ImageButton:
+    def __init__(self, image, pos):
+        self.image = image
+        self.original_image = image
+        self.x_pos = pos[0]
+        self.y_pos = pos[1]
+        self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+
+    def update(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def check_for_input(self, position):
+        return self.rect.collidepoint(position)
+
+    def change_size_on_hover(self, position):
+        if self.rect.collidepoint(position):
+            self.image = pygame.transform.scale(self.original_image,
+                (int(self.original_image.get_width() * 0.95), int(self.original_image.get_height() * 0.95)))
+        else:
+            self.image = self.original_image
+        self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))

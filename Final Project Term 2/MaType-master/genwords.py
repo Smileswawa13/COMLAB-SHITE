@@ -20,4 +20,4 @@ for word in wordlist:
     words[len(word)].add(word)
 
 with open("words.py", "w") as file:
-    file.write("words = {}".format(repr(dict(words))))
+    file.write("tutorial_words = {}".format(repr(dict(words))))

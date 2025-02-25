@@ -23,6 +23,24 @@ Classmate 1: That's it? You are just going to give up? I'll confront him and for
 The Rival: Enough! I don't want any more fame from winning the competition and exposing my pen name.
 Classmate 1: Oh. Sorry..
 
+
+>>>>>>>> STAGE 1 <<<<<<<<
+> MINIONS
+>> Classmate 1
+   Before the game: Haha! I am going to sabotage your projects!
+   After the game: You still got a high score?
+>> Classmate 2
+   Before the game: You know, you can back down now?
+   After the game: Ok, I give up...
+>> The Rival
+   Before the game: I will test if you have what it takes to compete.
+   After the game: Oh wow, I didn't expect that. Good job.
+
+> BOSS
+   Before the game: This is your final test, Good Luck!
+   After the game: Congratulations! You are qualified to be the one competing for this school!
+
+
 ==============STAGE 2 DIALOGUE==============
 
 > BEFORE THE LEVEL
@@ -45,9 +63,27 @@ Host: <You>!!
       *Applause*
 Host: A new challenger won in this branch and will now compete for the finals against other college branches!
 
-Another Contestant: How?! I was second place again!! Just who are you!?
+Another Contestant: I got second place again!! Just who are you!?
 You: I am just a person who wanted to participate in a contest.
 Another Contestant: Beginners luck isn't it? Next time, just you wait!
+
+
+>>>>>>>> STAGE 2 <<<<<<<<
+> MINIONS
+>> Contestant 1
+   Before the game: A new guy eh? I am a third year, This is my second as contestant. Good Luck to you!
+   After the game: Not bad not bad, or I would say... Luck?
+>> Contestant 2
+   Before the game: You know what? I like you. But I won't hold back!
+   After the game: Good Game. Just letting you know that you have potential!
+>> Contestant 3
+   Before the game: You are not going to beat me!
+   After the game: Ugh! Screw you!
+
+> BOSS
+   Before the game: I am kind of a slow typer so please go easy on me!
+   After the game: Damn you're fast! Can you teach me how to type fast?
+
 
 ==============STAGE 3 DIALOGUE==============
 
@@ -73,3 +109,21 @@ Host: The Champion for this year's contest... Well that is indeed surprising. Th
 Host: Despite being a college freshmen, they sure did dominate this contest! Let's have a round of applause!
 
 CSIS Contestant: Damn.. 1st Runner Up Again? I guess the engineering are really good with typing.
+You: I actually got it! All my past and hobbies, they are all useful to me.
+
+
+>>>>>>>> STAGE 3 <<<<<<<<
+> MINIONS
+>> ____ Contestant
+   Before the game: Are you the one who won on your Division? I hope you are better than the previous one!
+   After the game: I never would have thought to be beaten by a CEA.
+>> ____ Contestant
+   Before the game: Semi Finals? Is this also your first time? Same! Good Luck to you!
+   After the game: Aww, Good Game. You beat me. Go for the win fellow first timer!
+>> CSIS Contestant
+   Before the game: So it's the two of us huh? Too bad for you, I will be the one to win!
+   After the game: Damnit, I lost again.
+
+> BOSS
+   Before the game: Let's see who is cooler, Me or You? This game will show it all so give it your best!
+   After the game: Damn I feel cold! You are too cool that I am freezing!

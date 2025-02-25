@@ -66,7 +66,7 @@ while True:
     # Clear screen
     screen.fill(BLACK)
 
-    # Draw words
+    # Draw tutorial_words
     for word in falling_words:
         word_surface = font.render(word[0], True, WHITE)
         screen.blit(word_surface, (word[1], word[2]))
