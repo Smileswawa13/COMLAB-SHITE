@@ -15,7 +15,7 @@ Game Description: A typing game to see how good you are at typing
 VERSION 4AM 2/27/25
 """
 """
-TO DO:
+TO DO: MAAM IGNORE THIS
     CLEAN UP CODE AND ADD PROPER COMMENTS
     POLISH
     CHECK FOR UNUSED FUNCTIONS
@@ -68,6 +68,7 @@ def apply_wave_effect(image, amplitude, frequency, phase, color_shift):
         arr = pg.surfarray.pixels3d(image)
         height, width, _ = arr.shape
 
+        # Apply the wave effect to each column of pixels
         for x in range(width):
             # Calculate the vertical offset for the wave effect
             offset = int(amplitude * np.sin(2 * np.pi * frequency * x + phase))
@@ -114,7 +115,8 @@ def process_images():
 """UNIVERSAL FUNCTIONS------------------------------------------------------------------------------------------------"""
 
 """#Sorta the whole game ============================================================================================="""
-class game_Menu(object):
+#Menu class for the whole game
+class GameMenu(object):
     def __init__(self):
         try:
             # Initialize the screen with resizable option
@@ -169,6 +171,7 @@ class game_Menu(object):
     # Para ni sa menu
     def play(self):
         while True:
+            # Get the mouse position and animate the background
             PLAY_MOUSE_POS = pg.mouse.get_pos()
             animated_bg = self.animate_background()
             self.SCREEN.blit(animated_bg, (0, 0))
@@ -182,6 +185,7 @@ class game_Menu(object):
             self.SCREEN.blit(PLAY_TEXT_SHADOW, PLAY_RECT.move(2, 2))
             self.SCREEN.blit(PLAY_TEXT, PLAY_RECT)
 
+            # adjust the button start in the screen so that it will go in the rightplace
             button_y_start = self.SCREEN.get_height() // 2 - 180
 
             try:
@@ -219,42 +223,43 @@ class game_Menu(object):
             ENDING_BUTTON.update(self.SCREEN)
 
             # Main game loop
+            # tanawun unsa mahibato sa game loop, if naay event or wala
             for event in pg.event.get():
-                if event.type == pg.QUIT:
+                if event.type == pg.QUIT: #Mo quit ang game if naay event na quit
                     pg.quit()
                     sys.exit()
-                if event.type == pg.MOUSEBUTTONDOWN:
-                    if TUTORIAL_BUTTON.check_for_input(PLAY_MOUSE_POS):
+                if event.type == pg.MOUSEBUTTONDOWN: #Mo check if naay mouse click
+                    if TUTORIAL_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa tutorial button
                         pg.mixer.music.stop()
                         LoadingScreen(self.SCREEN).run()
                         Tutorial(self.SCREEN).run()
-                    elif INTRO_BUTTON.check_for_input(PLAY_MOUSE_POS):
+                    elif INTRO_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa intro button
                         pg.mixer.music.stop()
                         LoadingScreen(self.SCREEN).run()
-                        game_intro = introduction.Intro(self.SCREEN)
+                        game_intro = introduction.Intro(self.SCREEN) #Mo run sa intro
                         game_intro.run()
-                    elif STAGE1_BUTTON.check_for_input(PLAY_MOUSE_POS):
+                    elif STAGE1_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa stage1 button
                         pg.mixer.music.stop()
-                        stage_intro = introduction.Stage1Intro(self.SCREEN)
+                        stage_intro = introduction.Stage1Intro(self.SCREEN) #Mo run sa stage1
                         stage_intro.run()
-                    elif STAGE2_BUTTON.check_for_input(PLAY_MOUSE_POS):
+                    elif STAGE2_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa stage2 button
                         pg.mixer.music.stop()
                         LoadingScreen(self.SCREEN).run()
                         game_intro2 = introduction.Stage2Intro(self.SCREEN)
                         game_intro2.run()
-                    elif STAGE3_BUTTON.check_for_input(PLAY_MOUSE_POS):
+                    elif STAGE3_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa stage3 button
                         pg.mixer.music.stop()
                         LoadingScreen(self.SCREEN).run()
                         game_intro3 = introduction.Stage3Intro(self.SCREEN)
                         game_intro3.run()
-                    elif ENDING_BUTTON.check_for_input(PLAY_MOUSE_POS):
+                    elif ENDING_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa ending button
                         pg.mixer.music.stop()
                         LoadingScreen(self.SCREEN).run()
                         game_ending = endings.Ending(self.SCREEN)
                         game_ending.run()
                         break
-                elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                    main_menu = game_Menu()
+                elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE: #Mo check if naay keyboard input na escape
+                    main_menu = GameMenu()
                     main_menu.main_Menu()
 
             pg.display.update()
@@ -328,6 +333,7 @@ class game_Menu(object):
 
             pg.display.update()
 
+    # Mao ni ang title screen
     def title_screen(self):
         username = ""
         input_active = True
@@ -341,36 +347,43 @@ class game_Menu(object):
             print(f"Error loading title image: {e}")
             sys.exit()
 
+        # Define the position of the title image
         title_rect = title_image.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2.5))
         input_box = pg.Rect(self.SCREEN.get_width() // 2 - 100, title_rect.bottom + 70, 200, 50)
         color_inactive = pg.Color(255, 255, 255)
         color_active = pg.Color('red')
         color = color_inactive
 
+        # Main title screen loop
         while True:
             MOUSE_POS = pg.mouse.get_pos()
             animated_bg = self.animate_background()
             self.SCREEN.blit(animated_bg, (0, 0))
 
+            # Display the title image
             self.SCREEN.blit(title_image, title_rect)
 
+            # Display the username input box
             if input_active:
                 prompt_text = font.render("Enter your name (max 10 letters):", True, "White")
                 prompt_rect = prompt_text.get_rect(center=(self.SCREEN.get_width() // 2, title_rect.bottom + 50))
                 self.SCREEN.blit(prompt_text, prompt_rect)
 
+                # Render the username text and input box
                 txt_surface = font.render(username, True, color)
                 width = max(200, txt_surface.get_width() + 10)
                 input_box.w = width
                 self.SCREEN.blit(txt_surface, (input_box.centerx - txt_surface.get_width() // 2, input_box.y + 5))
                 pg.draw.rect(self.SCREEN, color, input_box, 2)
             else:
+                # Display the prompt to press any key to continue
                 prompt_text = font.render("Press any key to continue", True, "White")
                 prompt_rect = prompt_text.get_rect(center=(self.SCREEN.get_width() // 2, title_rect.bottom + 50))
                 prompt_color = "Red" if prompt_rect.collidepoint(MOUSE_POS) else "White"
                 prompt_text = font.render("Press any key to continue", True, prompt_color)
                 self.SCREEN.blit(prompt_text, prompt_rect)
 
+            # Main title screen loop
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
@@ -411,7 +424,7 @@ class game_Menu(object):
 """ENGINE SOUNDS VROOM VROOM ============================================================================================="""
 def main():
     process_images()  # Run the image processing code before starting the game
-    game = game_Menu()
+    game = GameMenu()
     game.title_screen()
 
 #HOLDER OF REALITY

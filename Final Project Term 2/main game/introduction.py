@@ -200,8 +200,8 @@ class Intro:
                     if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                         if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                             pg.mixer.music.stop()
-                            from mapuantypingmania import game_Menu
-                            game = game_Menu()
+                            from mapuantypingmania import GameMenu
+                            game = GameMenu()
                             game.play()
 
                         if self.text_fully_displayed:
@@ -282,8 +282,8 @@ class Stage1Intro:
                     if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                         if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                             pg.mixer.music.stop()
-                            from mapuantypingmania import game_Menu
-                            game = game_Menu()
+                            from mapuantypingmania import GameMenu
+                            game = GameMenu()
                             game.play()
                         if self.text_fully_displayed:
                             try:
@@ -358,8 +358,8 @@ class Stage1Outro:
                     if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                         if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                             pg.mixer.music.stop()
-                            from mapuantypingmania import game_Menu
-                            game = game_Menu()
+                            from mapuantypingmania import GameMenu
+                            game = GameMenu()
                             game.play()
                         if self.text_fully_displayed:
                             try:
@@ -422,8 +422,8 @@ class Stage2Intro:
                     self.message.update()
                 if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                     if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     if self.text_fully_displayed:
                         try:
@@ -482,8 +482,8 @@ class Stage2Outro:
                     self.message.update()
                 if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                     if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     if self.text_fully_displayed:
                         try:
@@ -546,8 +546,8 @@ class Stage3Intro:
                     self.message.update()
                 if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                     if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     if self.text_fully_displayed:
                         try:
@@ -607,8 +607,8 @@ class Stage3Outro:
                     self.message.update()
                 if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                     if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     if self.text_fully_displayed:
                         try:

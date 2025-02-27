@@ -87,8 +87,8 @@ class CREDITS:
 
     def run(self):
         pg.time.set_timer(pg.USEREVENT, 100)
-        from mapuantypingmania import game_Menu
-        game = game_Menu()
+        from mapuantypingmania import GameMenu
+        game = GameMenu()
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:

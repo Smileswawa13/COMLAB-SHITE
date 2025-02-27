@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="DRAFT"/>
+        <attribute name="authors" value="Admin"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-02-27 09:21:39 AM"/>
+        <attribute name="created" value="QWRtaW47RFVNQkFTUzsyMDI1LTAyLTI3OzA3OjI5OjUxIEFNOzIyODk="/>
+        <attribute name="edited" value="QWRtaW47RFVNQkFTUzsyMDI1LTAyLTI3OzA5OjIxOjM5IEFNOzE7MjM5Nw=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="game" type="String" array="False" size=""/>
+            <output expression="&quot;Start Game? input (on) or (no): &quot;" newline="True"/>
+            <input variable="game"/>
+            <if expression="game == &quot;no&quot;">
+                <then/>
+                <else>
+                    <do expression="game == &quot;on&quot;">
+                        <declare name="username" type="String" array="False" size=""/>
+                        <declare name="wild" type="Integer" array="False" size=""/>
+                        <declare name="key" type="String" array="False" size=""/>
+                        <output expression="&quot;TITLE SCREEN&quot; &amp; ToChar(13) &amp; &quot;Enter a username: &quot;" newline="True"/>
+                        <input variable="username"/>
+                        <output expression="&quot;Input any key: &quot;" newline="True"/>
+                        <input variable="key"/>
+                        <call expression="mainmenu(key)"/>
+                        <output expression="&quot;Input (on) if u wanna keep gaming, (no) otherwise:  &quot;" newline="True"/>
+                        <input variable="game"/>
+                    </do>
+                </else>
+            </if>
+            <output expression="&quot;No Gayming&quot;" newline="True"/>
+        </body>
+    </function>
+    <function name="mainmenu" type="None" variable="">
+        <parameters>
+            <parameter name="key" type="String" array="False"/>
+        </parameters>
+        <body>
+            <if expression="key == &quot;&quot;">
+                <then>
+                    <output expression="&quot;BYE BYE&quot;" newline="True"/>
+                </then>
+                <else>
+                    <input variable="key"/>
+                    <output expression="&quot;MAIN MENU&quot; &amp; ToChar(13) &amp; &quot;PLAY&quot; &amp; ToChar(13) &amp; &quot;LEADERBOARD&quot; &amp; ToChar(13) &amp; &quot;QUIT&quot;" newline="True"/>
+                    <declare name="menuchoice" type="String" array="False" size=""/>
+                    <input variable="menuchoice"/>
+                    <if expression="menuchoice == &quot;QUIT&quot;">
+                        <then>
+                            <output expression="&quot;BYE BYE&quot;" newline="True"/>
+                        </then>
+                        <else>
+                            <if expression="menuchoice == &quot;PLAY&quot;">
+                                <then>
+                                    <output expression="&quot;CHOOSE A STAGE&quot; &amp; ToChar(13) &amp; &quot;TUTORIAL&quot; &amp; ToChar(13) &amp; &quot;INTRO&quot; &amp; ToChar(13) &amp; &quot;STAGE1&quot; &amp; ToChar(13) &amp; &quot;STAGE2&quot; &amp; ToChar(13) &amp; &quot;STAGE3&quot; &amp; ToChar(13) &amp; &quot;STAGE4&quot; &amp; ToChar(13) &amp; &quot;ENDING&quot;" newline="True"/>
+                                </then>
+                                <else>
+                                    <if expression="menuchoice == LEADERBOARD">
+                                        <then>
+                                            <output expression="&quot;DISPLAYING LEADERBOARD&quot;" newline="True"/>
+                                        </then>
+                                        <else>
+                                            <output expression="&quot;BYE BYE&quot;" newline="True"/>
+                                        </else>
+                                    </if>
+                                </else>
+                            </if>
+                        </else>
+                    </if>
+                </else>
+            </if>
+        </body>
+    </function>
+    <function name="playmenu" type="None" variable="">
+        <parameters>
+            <parameter name="key" type="String" array="False"/>
+        </parameters>
+        <body/>
+    </function>
+</flowgorithm>

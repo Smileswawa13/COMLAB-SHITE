@@ -41,8 +41,8 @@ def pause(screen, background):
                 if event.key == pg.K_SPACE:
                     paused = False
                 elif event.key == pg.K_ESCAPE:
-                    from mapuantypingmania import game_Menu
-                    game = game_Menu()
+                    from mapuantypingmania import GameMenu
+                    game = GameMenu()
                     game.main_Menu()
                     return
 
@@ -353,8 +353,8 @@ class Tutorial:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     elif event.key == pg.K_LEFT and current_image_index > 0:
                         current_image_index -= 1
@@ -414,8 +414,8 @@ class Tutorial:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
@@ -508,8 +508,8 @@ class Tutorial:
                 elif event.type == pg.KEYDOWN:
                     self.display_victory()
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu
                         game.main_Menu(self.SCREEN)
                         return
                     elif event.key == pg.K_RETURN:
@@ -597,8 +597,8 @@ class Tutorial:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     else:
                         from introduction import Intro
@@ -1257,8 +1257,8 @@ class Stage1:
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
                         pg.mixer.music.stop()
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
@@ -1360,8 +1360,8 @@ class Stage1:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
@@ -1467,8 +1467,8 @@ class Stage1:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     else:
                         LoadingScreen(self.SCREEN).run()
@@ -2206,8 +2206,8 @@ class Stage2:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
@@ -2271,8 +2271,8 @@ class Stage2:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     else:
                         from introduction import Stage2Outro
@@ -2354,8 +2354,8 @@ class Stage2:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
@@ -2812,6 +2812,7 @@ class Stage3:
         self.current_enemy_index = 3
         if self.current_enemy_index == 3:
             self.enemy = self.enemies[self.current_enemy_index]
+            self.maam_emmy_display()
             self.before_battle_display(self.enemy)
             battle_started = True
 
@@ -2973,6 +2974,121 @@ class Stage3:
         explosion_rect = explosion_image.get_rect(center=word_rect.center)
         self.explosions.append((explosion_image, explosion_rect, pg.time.get_ticks()))
 
+    def maam_emmy_display(self):
+        fade_alpha = 0
+        fade_increment = 5  # Adjust this value to control the speed of the fade-in effect
+
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
+                        game.main_Menu()
+                        return
+                    elif event.key == pg.K_RETURN:
+                        return  # Exit the display and start the battle
+
+            self.SCREEN.blit(self.BG, (0, 0))
+
+            # Draw the enemy sprite talking
+            talk_sprite = pg.image.load("resources/sprites/mamemmy.png").convert_alpha()
+            # Scale down the sprite to fit the screen
+            sprite_scale_factor = 0.3  # Adjust this factor as needed
+            talk_sprite = pg.transform.scale(talk_sprite, (int(talk_sprite.get_width() * sprite_scale_factor),
+                                                           int(talk_sprite.get_height() * sprite_scale_factor)))
+            talk_sprite.set_alpha(fade_alpha)
+            talk_sprite_rect = talk_sprite.get_rect(
+                center=(self.SCREEN.get_width() - 250, self.SCREEN.get_height() // 2))
+            self.SCREEN.blit(talk_sprite, talk_sprite_rect)
+
+            # Draw the dialogue box with shadow
+            dialogue_text = ("\"If you quit right now, you can't have anything you want. "
+                             "So do your best\"")
+            small_font = pg.font.Font("resources/DejaVuSans.ttf", 25)
+            dlg_surf = small_font.render(dialogue_text, True, pg.Color("white"))
+            dlg_shadow = small_font.render(dialogue_text, True, pg.Color("black"))
+
+            box_width = int(dlg_surf.get_width() * 1.5) + 5
+            box_height = int(dlg_surf.get_height() * 1.5) + 5
+
+            # Define the points for the parallelogram shape
+            offset = 10
+            box_points = [
+                (self.SCREEN.get_width() // 2 - box_width // 2, self.SCREEN.get_height() // 2 - box_height // 2),
+                (self.SCREEN.get_width() // 2 + box_width // 2,
+                 self.SCREEN.get_height() // 2 - box_height // 2 - offset),
+                (self.SCREEN.get_width() // 2 + box_width // 2,
+                 self.SCREEN.get_height() // 2 + box_height // 2 - offset),
+                (self.SCREEN.get_width() // 2 - box_width // 2, self.SCREEN.get_height() // 2 + box_height // 2)
+            ]
+
+            shadow_points = [(x + 5, y + 5) for x, y in box_points]
+
+            # Draw the shadow first
+            pg.draw.polygon(self.SCREEN, (114, 141, 17, fade_alpha), shadow_points)
+
+            # Draw the main box
+            pg.draw.polygon(self.SCREEN, (32, 122, 19, fade_alpha), box_points)
+
+            # Rotate the text surface to match the angle of the parallelogram
+            angle = math.degrees(math.atan2(offset, box_width))
+            dlg_surf = pg.transform.rotate(dlg_surf, angle)
+            dlg_shadow = pg.transform.rotate(dlg_shadow, angle)
+
+            # Blit the shadow text first, then the main text
+            dlg_box_rect = pg.Rect(self.SCREEN.get_width() // 2 - box_width // 2,
+                                   self.SCREEN.get_height() // 2 - box_height // 2, box_width, box_height)
+            dlg_shadow.set_alpha(fade_alpha)
+            dlg_surf.set_alpha(fade_alpha)
+            self.SCREEN.blit(dlg_shadow, dlg_surf.get_rect(center=dlg_box_rect.center).move(2, 2))
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_box_rect.center))
+
+            # Draw the top and bottom bars with shadows
+            bar_height = 50
+            bar_color = (32, 122, 19)
+            shadow_color = (0, 0, 0)
+
+            # Top bar
+            top_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar.fill(bar_color)
+            top_bar.set_alpha(fade_alpha)
+            top_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar_shadow.fill(shadow_color)
+            top_bar_shadow.set_alpha(fade_alpha)
+            self.SCREEN.blit(top_bar_shadow, (0, 0))
+            self.SCREEN.blit(top_bar, (0, 0))
+
+            # Bottom bar
+            bottom_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar.fill(bar_color)
+            bottom_bar.set_alpha(fade_alpha)
+            bottom_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar_shadow.fill(shadow_color)
+            bottom_bar_shadow.set_alpha(fade_alpha)
+            self.SCREEN.blit(bottom_bar_shadow, (0, self.SCREEN.get_height() - bar_height))
+            self.SCREEN.blit(bottom_bar, (0, self.SCREEN.get_height() - bar_height))
+
+            # Draw the prompt to continue
+            prompt_text = "Press Enter to go to the battle"
+            prompt_surf = self.font.render(prompt_text, True, pg.Color("white"))
+            prompt_surf_shadow = self.font.render(prompt_text, True, pg.Color("black"))
+            prompt_surf.set_alpha(fade_alpha)
+            prompt_surf_shadow.set_alpha(fade_alpha)
+            prompt_rect = prompt_surf.get_rect(
+                center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2 + 300))
+            self.SCREEN.blit(prompt_surf_shadow, prompt_rect.move(2, 2))
+            self.SCREEN.blit(prompt_surf, prompt_rect)
+
+            if fade_alpha < 255:
+                fade_alpha = min(255, fade_alpha + fade_increment)
+
+            pg.display.flip()
+            self.clock.tick(60)
+
     def before_battle_display(self, minion):
         fade_duration = 1.0  # Duration of the fade-in effect in seconds
         fade_alpha = 0  # Initial alpha value for fade-in effect
@@ -2985,8 +3101,8 @@ class Stage3:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
@@ -3050,8 +3166,8 @@ class Stage3:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
                     else:
                         from endings import Ending
@@ -3136,8 +3252,8 @@ class Stage3:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import game_Menu
-                        game = game_Menu()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
@@ -3521,7 +3637,7 @@ class BossSThree(Stage3Enemies):
         self.hit_sprite = pg.transform.smoothscale(self.hit_sprite, (450, 650))
         self.talk_sprite = pg.transform.smoothscale(self.talk_sprite, (450, 650))
         self.defeat_sprite = pg.transform.smoothscale(self.defeat_sprite, (450, 650))
-        self.dialogue_text = ("\"Let's see who is cooler, Me or You? \n"
+        self.dialogue_text = ("\"Let's see who is cooler, Me or You?"
                               "This game will show it all so give it your best!\"")
         self.defeat_text = "\"Damn I feel cold! You are too cool that I am freezing!\""
         self.hitpoints = 50 + level * 10  # Boss has more hitpoints
