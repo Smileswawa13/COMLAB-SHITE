@@ -1,3 +1,4 @@
+# Dictionary for the faliing words ingame.
 tutorial_words = {
     3: {'CPU', 'RAM', 'ENG', 'LAB', 'APP', 'BOT', 'NET', 'CAM', 'SYS', 'OSI'},
     4: {'Code', 'Math', 'Java', 'Data', 'Bits', 'Node', 'Chip', 'Wire', 'Term', 'Quiz', 'Byte', 'Test', 'Blog', 'Mode',
@@ -73,37 +74,60 @@ stage2_words = {
     9: {'Championship'}
 }
 
+stage3_words = {
+    3: {'win', 'top', 'new', 'old', 'cut', 'see', 'fix', 'run', 'use', 'mix', 'CPU', 'RAM',
+        'APP', 'NET', 'SYS', 'hit',
+        'try', 'set', 'gap', 'add', 'sum', 'max', 'hot', 'log', 'box', 'tap', 'job', 'zip',
+        'bit', 'pit', 'cap', 'kit'},
+
+    4: {'high', 'test', 'rank', 'best', 'quiz', 'redo', 'task', 'mode', 'idea', 'Code',
+        'Math', 'Java', 'Data', 'Byte',
+        'Plan', 'User', 'Link', 'Role', 'fast', 'pace', 'keys', 'jump', 'move', 'goal',
+        'dash', 'scan', 'word', 'team',
+        'push', 'save', 'flow', 'play', 'sort', 'flip', 'load', 'turn'},
+
+    5: {'score', 'speed', 'focus', 'rival', 'rules', 'award', 'submit', 'winner',
+        'online', 'format', 'medal', 'effort',
+        'ranking', 'contest', 'writing', 'logic', 'debug', 'frame', 'stack', 'table',
+        'input', 'board', 'server', 'binary',
+        'module', 'output', 'kernel', 'match', 'press', 'style', 'touch', 'quick',
+        'click', 'trace', 'write', 'train',
+        'excel', 'timer', 'final', 'event'},
+
+    6: {'Network', 'records', 'scoring', 'entries', 'testing', 'research', 'feedback',
+        'practice', 'guidance', 'analysis',
+        'training', 'education', 'graduate', 'knowledge', 'qualified', 'accuracy',
+        'judgment', 'strategy', 'reaction'},
+
+    7: {'Digital', 'strategies', 'proficiency', 'competition', 'communication',
+        'responsibility', 'certification',
+        'collaboration', 'encouragement', 'accomplishments', 'demonstration',
+        'computational', 'determination'},
+
+    8: {'Software', 'Hardware', 'Keystroke', 'Leaderboard', 'WPM', 'Performance'},
+
+    9: {'Championship', 'Finalist'}
+}
+
+
 bonus_words = {
-    3: {'UNO', 'DOS'},
-    4: {'IP-GRADE', 'PASAR', 'TRES'},
-    5: {'SINGKO', 'HUGOT', 'PUYAT', 'PETIX'},
+    3: {'UNO', 'DOS', 'EMMY', 'LAB', 'CAD', 'PCB', 'FEM', 'FFT', 'VLS'},
+    4: {'IP-GRADE', 'PASAR', 'TRES', 'CPE001', 'QUIZ', 'LABS', 'CODE', 'MATH', 'FEES',
+        'DRAW', 'LOAD', 'THESIS', 'CRAM', 'SEAT', 'WIFI', 'PASS'},
+    5: {'SINGKO', 'HUGOT', 'PUYAT', 'DONUT', 'GRACE'},
     6: {'KABADO', 'BURNOUT', 'SABLAY', 'WALKOUT', 'VIVA'},
-    7: {'DEBARRED', 'DELOADED', 'THESIS', 'DEFENSE', 'GHOSTING', 'HAPPY T', 'HOHOL', 'KKB', 'BUDOL'},
-    8: {'TRANSFEREE', 'SUMMER TERM', 'MIDTERMS', 'QR CODE', 'MALAYAN', 'MATH MAJOR',
+    7: {'DEBARRED', 'DELOADED', 'GAMING', 'DEFENSE', 'GHOSTING', 'HAPPY T', 'HOHOL',
+        'KKB', 'BUDOL'},
+    8: {'TRANSFEREE', 'SUMMER TERM', 'MIDTERMS', 'QR CODE', 'MALAYAN', 'MATH BAGSAK',
         'TYPHOON BREAK', 'PISO WI-FI', 'CPE LIFE',
         'CODING HELL', 'DEBUG MODE', 'STACK OVERFLOW',
         'SYNTAX ERROR', 'LOGIC ERROR', 'SYNTAX ERROR',
         'INFINITE LOOP', 'LATE NIGHT CODE', 'ARDUINO',
-        'RASPBERRY PI', 'FPGA', 'CIRCUITS', 'VOLTAGE DROP',
+        'RASPBERRY PI', 'FPGA', 'CIRCUITS',
         'RESISTANCE', 'OHM’S LAW', 'KIRCHHOFF’S LAW',
-        'MICROPROCESSOR', 'ASSEMBLY LANGUAGE', 'C++',
+        'MICROPROCESSOR', 'ASSEMBLY LANGUAGE', 'C++', 'PYTHON'
         'PYTHON', 'JAVA', 'MATLAB', 'NETWORKING', 'GITHUB',
-        'MERGE CONFLICT', 'FINAL PROJECT', 'OJT', 'INTERNSHIP',
+        'MERGE CONFLICT', 'FINAL PROJECT', 'OJT', 'INTERNSHIP', 'PROGRAMMING'
         'CAPSTONE'},
-    9: {'MAPUA MINDANAO'}
-}
-
-bossfight_bonus = {
-    13: {"Hello, World!"},
-    20: {"It works on my machine!"},
-    19: {"Just one more bug..."},
-    35: {"My code doesn’t work. I have no idea why."},
-    36: {"My code works. I have no idea why."},
-    32: {"CPE = Coffee, Programming, and Exams"},
-    28: {"Did you submit the lab report?"},
-    41: {"CTRL + Z, CTRL + C, CTRL + V (Survival tools)"},
-    20: {"Typing speed = survival."},
-    20: {"Gawa mo? Hindi, gawa ng tutorial."},
-    20: {"Saan ka nag OJT? Sa GitHub."},
-    55: {"Professor: This is basic. (Class collectively panics)"}
+    9: {'MAPUA MINDANAO', 'REQUILLO'}
 }

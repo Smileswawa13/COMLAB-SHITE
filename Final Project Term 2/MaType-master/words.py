@@ -1,5 +1,5 @@
-words = {2: set(['sc', 'ye', 'ge', 'tm', 'ma']),
-         3: set(['fly', 'ito', 'mar', 'ads', 'nib', 'ill', 'rye', 'sad', 'kay', 'ian', 'fan', 'soy', 'lox', 'guy']),
+words = {2: {'sc', 'ye', 'ge', 'tm', 'ma'},
+         3: {'fly', 'ito', 'mar', 'ads', 'nib', 'ill', 'rye', 'sad', 'kay', 'ian', 'fan', 'soy', 'lox', 'guy'},
          4: set(['gwen', 'lang', 'cusp', 'alba', 'slaw', 'slim', 'eris', 'sled', 'cray', 'coop', 'bork',
                  'pond', 'boas', 'moll', 'conk', 'blue', 'what', 'said', 'mull', 'odes', 'nook', 'seas', 'calm',
                  'wags', 'oils', 'hove', 'prof', 'bout', 'must', 'dogs', 'hope', 'sops', 'cary', 'fade', 'zest',

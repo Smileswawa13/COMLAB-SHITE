@@ -1,3 +1,4 @@
+# Module sa pagsulat ng mga score sa isang file at pagbabasa nila muli.
 import sys
 import random
 from string import printable
@@ -6,68 +7,89 @@ from collections import defaultdict
 # Initialize the tutorial_words dictionary
 words = defaultdict(set)
 
+# Mao ni sila mag generate us listahan nga random para gamiton sa dula
 def generate_words_tutorial():
     """
-    Generate a list of tutorial_words from the tutorial_words dictionary.
+    Generate lists of words from the tutorial_words and bonus_words dictionaries.
 
     Returns:
-    list: A list of randomly selected tutorial_words.
+    two lists of words for tutorial and bonus.
     """
     try:
-        from words import tutorial_words as word_dict
-        all_words = [word for word_list in word_dict.values() for word in word_list]
-        return random.sample(all_words, min(len(all_words), 100))  # Adjust the number of tutorial_words as needed
+        from words import tutorial_words, bonus_words
+
+        tutorial_list = [word for word_list in tutorial_words.values() for word in word_list]
+        bonus_list = [word for word_list in bonus_words.values() for word in word_list]
+
+        random.shuffle(tutorial_list)
+        random.shuffle(bonus_list)
+
+        return tutorial_list, bonus_list
     except ImportError:
-        return []
-
-
-import random
+        return [], []
 
 def generate_words_stage1():
     """
-    Generate lists of words from the stage1_words, bonus_words, and bossfight_bonus dictionaries.
+    Generate lists of words from the stage1_words, and bonus_words dictionaries.
 
     Returns:
-    tuple: Three lists of words for stage1, bonus, and bossfight.
+    two lists of words for stage1, bonus.
     """
     try:
-        from words import stage1_words, bonus_words, bossfight_bonus
+        from words import stage1_words, bonus_words
 
         stage1_list = [word for word_list in stage1_words.values() for word in word_list]
         bonus_list = [word for word_list in bonus_words.values() for word in word_list]
-        bossfight_list = [word for word_list in bossfight_bonus.values() for word in word_list]
 
         random.shuffle(stage1_list)
         random.shuffle(bonus_list)
-        random.shuffle(bossfight_list)
 
-        return stage1_list, bonus_list, bossfight_list
+        return stage1_list, bonus_list
     except ImportError:
-        return [], [], []
+        return [], []
+
 
 def generate_words_stage2():
     """
-    Generate lists of words from the stage1_words, bonus_words, and bossfight_bonus dictionaries.
+    Generate lists of words from the stage2_words and bonus_words dictionaries.
 
     Returns:
-    tuple: Three lists of words for stage1, bonus, and bossfight.
+    Two lists of words for stage2 and bonus.
     """
     try:
-        from words import stage2_words, bonus_words, bossfight_bonus
+        from words import stage2_words, bonus_words
 
-        stage1_list = [word for word_list in stage2_words.values() for word in word_list]
+        stage2_list = [word for word_list in stage2_words.values() for word in word_list]
         bonus_list = [word for word_list in bonus_words.values() for word in word_list]
-        bossfight_list = [word for word_list in bossfight_bonus.values() for word in word_list]
 
-        random.shuffle(stage1_list)
+        random.shuffle(stage2_list)
         random.shuffle(bonus_list)
-        random.shuffle(bossfight_list)
 
-        return stage1_list, bonus_list, bossfight_list
+        return stage2_list, bonus_list
     except ImportError:
-        return [], [], []
+        return [], []
 
+def generate_words_stage3():
+    """
+    Generate lists of words from the stage3_words and bonus_words dictionaries.
 
+    Returns:
+    Two lists of words for stage3 and bonus.
+    """
+    try:
+        from words import stage3_words, bonus_words
+
+        stage3_list = [word for word_list in stage3_words.values() for word in word_list]
+        bonus_list = [word for word_list in bonus_words.values() for word in word_list]
+
+        random.shuffle(stage3_list)
+        random.shuffle(bonus_list)
+
+        return stage3_list, bonus_list
+    except ImportError:
+        return [], []
+
+# Holder of Reality
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python genwords.py <dictfile>")

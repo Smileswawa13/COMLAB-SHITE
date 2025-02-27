@@ -1,5 +1,7 @@
+# Module for the buttons of the game
 import pygame
 
+# Kato ni daan na button wala na gamit karun
 class Button():
     def __init__(self, image, pos, text_input, font, base_color, hovering_color):
         try:
@@ -43,6 +45,7 @@ class Button():
         except Exception as e:
             print(f"Error changing color: {e}")
 
+# Kato ni na button gamit karun
 class ImageButton:
     def __init__(self, image, pos):
         self.image = image
