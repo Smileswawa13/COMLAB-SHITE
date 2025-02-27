@@ -2222,26 +2222,21 @@ class Stage2:
                 center=(self.SCREEN.get_width() - 250, self.SCREEN.get_height() // 2))
             self.SCREEN.blit(talk_sprite, talk_sprite_rect)
 
-            # Draw the dialogue box using tutorial.gif with fade-in effect
+            # Draw the dialogue box with fade-in effect
             small_font = pg.font.Font("resources/DejaVuSans.ttf", 20)
             dlg_surf = small_font.render(minion.dialogue_text, True, pg.Color(251, 255, 52))
             dlg_surf.set_alpha(fade_alpha)
 
-            # Load and scale the tutorial.gif image for the dialogue box
-            word_bg_image = pg.image.load("resources/transparent/tristan.gif").convert_alpha()
-            box_width = int(dlg_surf.get_width() * 1.5) + 5
-            box_height = int(dlg_surf.get_height() * 1.5) + 30
-            word_bg_image_scaled = pg.transform.scale(word_bg_image, (box_width, box_height))
-            word_bg_image_scaled.set_alpha(fade_alpha)
+            # Create a rectangular surface for the text box
+            box_width = int(dlg_surf.get_width() * 1.5) + 20
+            box_height = int(dlg_surf.get_height() * 1.5) + 20
+            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
+            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
+            text_box_rect = text_box.get_rect(center=(talk_sprite_rect.centerx, talk_sprite_rect.centery + 100))
 
-            # Position the dialogue box with a negative x-coordinate to overlay over the sprite
-            dlg_box_rect = word_bg_image_scaled.get_rect(
-                midright=(talk_sprite_rect.left - 20, talk_sprite_rect.centery))
-            dlg_box_rect.x += 140  # Adjust this value as needed to overlay the dialogue box
-
-            # Blit the dialogue box and then the text centered in it
-            self.SCREEN.blit(word_bg_image_scaled, dlg_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_box_rect.center))
+            # Blit the text box and then the text centered in it
+            self.SCREEN.blit(text_box, text_box_rect)
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
 
             # Draw the bottom bar with fade-in effect
             bottom_bar_height = 100
@@ -2260,12 +2255,9 @@ class Stage2:
             self.SCREEN.blit(prompt_surf_shadow, prompt_rect.move(2, 2))
             self.SCREEN.blit(prompt_surf, prompt_rect)
 
-            # Apply fade-in effect
-            if fade_alpha < 255:
-                fade_alpha = min(255, fade_alpha + fade_increment)
-
             pg.display.flip()
-            self.clock.tick(60)
+            fade_alpha = min(fade_alpha + fade_increment, 255)
+            pg.time.Clock().tick(60)
 
     def display_victory(self):
         if self.score > self.highscore:
@@ -2381,18 +2373,16 @@ class Stage2:
             dlg_surf = small_font.render(minion.defeat_text, True, pg.Color(251, 255, 52))
             dlg_surf.set_alpha(fade_alpha)
 
-            word_bg_image = pg.image.load("resources/transparent/tristan.gif").convert_alpha()
-            box_width = int(dlg_surf.get_width() * 1.5) + 5
-            box_height = int(dlg_surf.get_height() * 1.5) + 30
-            word_bg_image_scaled = pg.transform.scale(word_bg_image, (box_width, box_height))
-            word_bg_image_scaled.set_alpha(fade_alpha)
+            # Create a rectangular surface for the text box
+            box_width = int(dlg_surf.get_width() * 1.5)
+            box_height = int(dlg_surf.get_height() * 1.5)
+            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
+            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
+            text_box_rect = text_box.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2))
 
-            dlg_box_rect = word_bg_image_scaled.get_rect(
-                midright=(defeat_sprite_rect.left - 20, defeat_sprite_rect.centery))
-            dlg_box_rect.x += 140
-
-            self.SCREEN.blit(word_bg_image_scaled, dlg_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_box_rect.center))
+            # Blit the text box and then the text centered in it
+            self.SCREEN.blit(text_box, text_box_rect)
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
 
             bottom_bar_height = 100
             bottom_bar = pg.Surface((self.SCREEN.get_width(), bottom_bar_height), pg.SRCALPHA)
@@ -3011,26 +3001,21 @@ class Stage3:
                 center=(self.SCREEN.get_width() - 250, self.SCREEN.get_height() // 2))
             self.SCREEN.blit(talk_sprite, talk_sprite_rect)
 
-            # Draw the dialogue box using tutorial.gif with fade-in effect
+            # Draw the dialogue box with fade-in effect
             small_font = pg.font.Font("resources/DejaVuSans.ttf", 20)
             dlg_surf = small_font.render(minion.dialogue_text, True, pg.Color(251, 255, 52))
             dlg_surf.set_alpha(fade_alpha)
 
-            # Load and scale the tutorial.gif image for the dialogue box
-            word_bg_image = pg.image.load("resources/transparent/tristan.gif").convert_alpha()
-            box_width = int(dlg_surf.get_width() * 1.5) + 5
-            box_height = int(dlg_surf.get_height() * 1.5) + 30
-            word_bg_image_scaled = pg.transform.scale(word_bg_image, (box_width, box_height))
-            word_bg_image_scaled.set_alpha(fade_alpha)
+            # Create a rectangular surface for the text box
+            box_width = int(dlg_surf.get_width() * 1.5)
+            box_height = int(dlg_surf.get_height() * 1.5)
+            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
+            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
+            text_box_rect = text_box.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2))
 
-            # Position the dialogue box with a negative x-coordinate to overlay over the sprite
-            dlg_box_rect = word_bg_image_scaled.get_rect(
-                midright=(talk_sprite_rect.left - 20, talk_sprite_rect.centery))
-            dlg_box_rect.x += 140  # Adjust this value as needed to overlay the dialogue box
-
-            # Blit the dialogue box and then the text centered in it
-            self.SCREEN.blit(word_bg_image_scaled, dlg_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_box_rect.center))
+            # Blit the text box and then the text centered in it
+            self.SCREEN.blit(text_box, text_box_rect)
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
 
             # Draw the bottom bar with fade-in effect
             bottom_bar_height = 100
@@ -3049,12 +3034,9 @@ class Stage3:
             self.SCREEN.blit(prompt_surf_shadow, prompt_rect.move(2, 2))
             self.SCREEN.blit(prompt_surf, prompt_rect)
 
-            # Apply fade-in effect
-            if fade_alpha < 255:
-                fade_alpha = min(255, fade_alpha + fade_increment)
-
             pg.display.flip()
-            self.clock.tick(60)
+            fade_alpha = min(fade_alpha + fade_increment, 255)
+            pg.time.Clock().tick(60)
 
     def display_victory(self):
         if self.score > self.highscore:
@@ -3173,18 +3155,16 @@ class Stage3:
             dlg_surf = small_font.render(minion.defeat_text, True, pg.Color(251, 255, 52))
             dlg_surf.set_alpha(fade_alpha)
 
-            word_bg_image = pg.image.load("resources/transparent/tristan.gif").convert_alpha()
-            box_width = int(dlg_surf.get_width() * 1.5) + 5
-            box_height = int(dlg_surf.get_height() * 1.5) + 30
-            word_bg_image_scaled = pg.transform.scale(word_bg_image, (box_width, box_height))
-            word_bg_image_scaled.set_alpha(fade_alpha)
+            # Create a rectangular surface for the text box
+            box_width = int(dlg_surf.get_width() * 1.5)
+            box_height = int(dlg_surf.get_height() * 1.5)
+            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
+            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
+            text_box_rect = text_box.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2))
 
-            dlg_box_rect = word_bg_image_scaled.get_rect(
-                midright=(defeat_sprite_rect.left - 20, defeat_sprite_rect.centery))
-            dlg_box_rect.x += 140
-
-            self.SCREEN.blit(word_bg_image_scaled, dlg_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_box_rect.center))
+            # Blit the text box and then the text centered in it
+            self.SCREEN.blit(text_box, text_box_rect)
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
 
             bottom_bar_height = 100
             bottom_bar = pg.Surface((self.SCREEN.get_width(), bottom_bar_height), pg.SRCALPHA)
