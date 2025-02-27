@@ -2025,13 +2025,19 @@ class Stage2:
         battle_started = False
         hue = 0
 
-        while self.current_enemy_index < len(self.enemies):
+        # while self.current_enemy_index < len(self.enemies):
+        #     self.enemy = self.enemies[self.current_enemy_index]
+        #     self.before_battle_display(self.enemy)
+        #     battle_started = True
+        #
+        #     pg.mixer.music.load(self.inbattle_music)
+        #     pg.mixer.music.play(-1)
+
+        self.current_enemy_index = 3
+        if self.current_enemy_index == 3:
             self.enemy = self.enemies[self.current_enemy_index]
             self.before_battle_display(self.enemy)
             battle_started = True
-
-            pg.mixer.music.load(self.inbattle_music)
-            pg.mixer.music.play(-1)
 
             while True:
                 timepassed = self.clock.tick(60) / 1000.0
@@ -2277,9 +2283,9 @@ class Stage2:
                         game = game_Menu()
                         game.play()
                     else:
-                        from introduction import Intro
+                        from introduction import Stage2Outro
                         LoadingScreen(self.SCREEN).run()
-                        Intro(self.SCREEN).run()
+                        Stage2Outro(self.SCREEN).run()
 
             # Prepare text surfaces and their positions
             center = (self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2)
@@ -2532,7 +2538,7 @@ class Stage2:
                                       True, (255, 255, 255))
         health_surf = self.font.render(f"Health: {self.health}",
                                        True, (255, 255, 255))
-        enemy_name = self.font.render(f"Enemy: Tutorial Guy",
+        enemy_name = self.font.render(f"Enemy: THE INTELLECTUAL",
                                       True, (255, 255, 255))
 
         # Calculate positions for the text
@@ -2743,8 +2749,8 @@ class BossSTwo(Stage2Enemies):
         self.hit_sprite = pg.transform.smoothscale(self.hit_sprite, (450, 650))
         self.talk_sprite = pg.transform.smoothscale(self.talk_sprite, (450, 650))
         self.defeat_sprite = pg.transform.smoothscale(self.defeat_sprite, (450, 650))
-        self.dialogue_text = "\"I am the final challenge! Prepare yourself!\""
-        self.defeat_text = "\"Congrats!\""
+        self.dialogue_text = "\"I am kind of a slow typer so please go easy on me!\""
+        self.defeat_text = "\"Damn you're fast! Can you teach me how to type fast?\""
         self.hitpoints = 50 + level * 10  # Boss has more hitpoints
         self.max_health = self.hitpoints  # Store the initial maximum health
         self.word_speed = 3.0 # Boss has a faster word speed
@@ -2809,7 +2815,12 @@ class Stage3:
         battle_started = False
         hue = 0
 
-        while self.current_enemy_index < len(self.enemies):
+        # while self.current_enemy_index < len(self.enemies):
+        #     self.enemy = self.enemies[self.current_enemy_index]
+        #     self.before_battle_display(self.enemy)
+        #     battle_started = True
+        self.current_enemy_index = 3
+        if self.current_enemy_index == 3:
             self.enemy = self.enemies[self.current_enemy_index]
             self.before_battle_display(self.enemy)
             battle_started = True
@@ -3061,9 +3072,12 @@ class Stage3:
                         game = game_Menu()
                         game.play()
                     else:
-                        from introduction import Intro
+                        from endings import Ending
                         LoadingScreen(self.SCREEN).run()
-                        Intro(self.SCREEN).run()
+                        from introduction import Stage3Outro
+                        Stage3Outro(self.SCREEN).run()
+                        ending = Ending(self.SCREEN)
+                        ending.run()
 
             # Prepare text surfaces and their positions
             center = (self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2)
@@ -3316,7 +3330,7 @@ class Stage3:
                                       True, (255, 255, 255))
         health_surf = self.font.render(f"Health: {self.health}",
                                        True, (255, 255, 255))
-        enemy_name = self.font.render(f"Enemy: Tutorial Guy",
+        enemy_name = self.font.render(f"Enemy: THE ICE KING",
                                       True, (255, 255, 255))
 
         # Calculate positions for the text
@@ -3527,8 +3541,9 @@ class BossSThree(Stage3Enemies):
         self.hit_sprite = pg.transform.smoothscale(self.hit_sprite, (450, 650))
         self.talk_sprite = pg.transform.smoothscale(self.talk_sprite, (450, 650))
         self.defeat_sprite = pg.transform.smoothscale(self.defeat_sprite, (450, 650))
-        self.dialogue_text = "\"I am the final challenge! Prepare yourself!\""
-        self.defeat_text = "\"Congrats!\""
+        self.dialogue_text = ("\"Let's see who is cooler, Me or You? \n"
+                              "This game will show it all so give it your best!\"")
+        self.defeat_text = "\"Damn I feel cold! You are too cool that I am freezing!\""
         self.hitpoints = 50 + level * 10  # Boss has more hitpoints
         self.max_health = self.hitpoints  # Store the initial maximum health
         self.word_speed = 4.4 # Boss has a faster word speed
