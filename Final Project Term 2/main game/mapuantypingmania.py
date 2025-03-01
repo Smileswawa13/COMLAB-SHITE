@@ -12,10 +12,12 @@ Game Description: A typing game to see how good you are at typing
                     typing speed and accuracy. Enter the championship and win
                     the title of the fastest typist in Mapua University.
 
-VERSION 4AM 2/27/25
+VERSION 2PM 03/01/25
 """
+
+
 """
-TO DO: MAAM IGNORE THIS
+TO DO: MAAM IGNORE THIS!
     CLEAN UP CODE AND ADD PROPER COMMENTS
     POLISH
     CHECK FOR UNUSED FUNCTIONS
@@ -25,19 +27,20 @@ TO DO: MAAM IGNORE THIS
     STAGE 1  is done howah
     STAGE 2 just need edit
     STAGE 3 just need edit
-    OPTIONS - SOUND, MUSIC, DIFFICULTY
-    LEADERBOARD
-    CHALLENGE MODE
-    TIMED MODE
-    MULTIPLAYER MODE
-    IM GOING INSANE
-    LOCKED STAGES
-    THREADS naa na isa
-    MAKE EVERYTHING RESIZABLE
-    SAVE MODE
-    SET UP HIGH SCORES
-    ADD ABILITIES IN BETWEEN LEVELS
-    CHNAGE NAMES FOR ENEMIES
+    OPTIONS - SOUND, MUSIC, DIFFICULTY - skip din
+    LEADERBOARD - check
+    CHALLENGE MODE - Skip nlng for now. Unless ma'am asks us to implement
+    ->ENDLESS MODE
+    ->TIMED MODE
+    ->MULTIPLAYER MODE
+    IM GOING INSANE - wilding
+    LOCKED STAGES - skip
+    THREADS naa na isa - check
+    MAKE EVERYTHING RESIZABLE - skip
+    SAVE MODE - skip
+    SET UP HIGH SCORES - done
+    ADD ABILITIES IN BETWEEN LEVELS - skip
+    CHNAGE NAMES FOR ENEMIES - done for bosses
 """
 
 import os
@@ -59,7 +62,10 @@ height = 650
 """UNIVERSAL FUNCTIONS------------------------------------------------------------------------------------------------"""
 # Kuhag font gikan sa computer
 def get_Font(size):
-    return pg.font.Font(os.path.join(os.path.dirname(__file__), "resources/DejaVuSans.ttf"), size)
+    font_path = os.path.join(os.path.dirname(__file__), "resources/DejaVuSans.ttf")
+    if not os.path.exists(font_path):
+        raise FileNotFoundError(f"Font file not found: {font_path}")
+    return pg.font.Font(font_path, size)
 
 # Katung pa wave sa menu
 def apply_wave_effect(image, amplitude, frequency, phase, color_shift):
@@ -240,6 +246,7 @@ class GameMenu(object):
                         game_intro.run()
                     elif STAGE1_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa stage1 button
                         pg.mixer.music.stop()
+                        LoadingScreen(self.SCREEN).run()
                         stage_intro = introduction.Stage1Intro(self.SCREEN) #Mo run sa stage1
                         stage_intro.run()
                     elif STAGE2_BUTTON.check_for_input(PLAY_MOUSE_POS): #Mo check if naay mouse click sa stage2 button

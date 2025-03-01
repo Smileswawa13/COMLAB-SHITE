@@ -1,4 +1,6 @@
 import sys
+import threading
+
 import pygame as pg
 from bgfix import stretch
 from introduction import DynamicText
@@ -22,9 +24,22 @@ class Ending:
         self.fade_alpha = 0
         self.fading = False
 
+        # Start a new thread to load and play ending music
+        self.music_thread = threading.Thread(target=self.load_and_play_music)
+        self.music_thread.start()
+
+    def load_and_play_music(self):
+        try:
+            # Load and play intro song
+            self.music = "resources/sounds/songs/ending.mp3"
+            pg.mixer.music.load(self.music)
+            pg.mixer.music.play(-1)
+        except Exception as e:
+            print(f"Error loading and playing music: {e}")
+
     def run(self):
         pg.time.set_timer(pg.USEREVENT, self.message.speed)
-        credits = CREDITS(self.SCREEN)
+        credits = Credits(self.SCREEN)
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -52,7 +67,10 @@ class Ending:
                 fade_surface.set_alpha(self.fade_alpha)
                 self.SCREEN.blit(fade_surface, (0, 0))
                 if self.fade_alpha == 255:
+                    pg.mixer_music.stop()
                     credits.run()
+
+
             else:
                 self.SCREEN.blit(self.background, (0, 0))
                 self.message.draw(self.SCREEN)
@@ -64,9 +82,8 @@ class Ending:
 
 """ENDINGS END ----------------------------------------------------------------------------------------------------
 
-CREDITS START----------------------------------------------------------------------------------------------------"""
-
-class CREDITS:
+Credits START----------------------------------------------------------------------------------------------------"""
+class Credits:
     def __init__(self, screen):
         self.SCREEN = screen
         width, height = self.SCREEN.get_size()
@@ -86,9 +103,11 @@ class CREDITS:
         self.last_switch_time = pg.time.get_ticks()
 
     def run(self):
+        pg.mixer.init()
+        music = "resources/sounds/songs/credits.mp3"
+        pg.mixer_music.load(music)
+        pg.mixer.music.play(-1)
         pg.time.set_timer(pg.USEREVENT, 100)
-        from mapuantypingmania import GameMenu
-        game = GameMenu()
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -98,8 +117,11 @@ class CREDITS:
                     pass
                 if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                     if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                        pg.mixer.music.stop()
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
                         game.play()
-                        return  # Exit the credits loop and return to the main menu
+                        return  # Exit the credits loop
 
             self.update_background()
             self.SCREEN.blit(self.backgrounds[self.current_bg_index], (0, 0))
@@ -216,5 +238,4 @@ class CREDITS:
     def import_text(self, filename):
         with open(filename, 'r') as file:
             return file.read()
-
-"""CREDITS END----------------------------------------------------------------------------------------------------"""
+"""Credits END----------------------------------------------------------------------------------------------------"""

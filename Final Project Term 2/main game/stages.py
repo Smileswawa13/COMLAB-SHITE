@@ -1069,16 +1069,17 @@ class Stage1:
         hue = 0
 
         # self.defeat_display(Boss(self.SCREEN, self.level))
-        # while self.current_enemy_index < len(self.enemies):
-        #     self.enemy = self.enemies[self.current_enemy_index]
-        #     self.before_battle_display(self.enemy)
-        #     battle_started = True
 
-        self.current_enemy_index = 3
-        if self.current_enemy_index == 3:
+        while self.current_enemy_index < len(self.enemies):
             self.enemy = self.enemies[self.current_enemy_index]
             self.before_battle_display(self.enemy)
             battle_started = True
+
+        # self.current_enemy_index = 3
+        # if self.current_enemy_index == 3:
+        #     self.enemy = self.enemies[self.current_enemy_index]
+        #     self.before_battle_display(self.enemy)
+        #     battle_started = True
 
             pg.mixer.music.load(self.inbattle_music)
             pg.mixer.music.play(-1)
@@ -2006,9 +2007,9 @@ class Stage2:
         self.bonus_word_counter = 0
 
         # Load background music
-        pg.mixer.init()
-        self.tutorial_prebattle_music = "resources/sounds/songs/tutorial_prebattle.mp3"
-        self.inbattle_music = "resources/sounds/songs/tutorial_inbattle.mp3"
+        self.inbattle_music = "resources/sounds/songs/s2minion.mp3"
+        self.prebattle_music = "resources/sounds/songs/s2_prebattle.mp3"
+        self.victory_music = "resources/sounds/songs/s1victory.mp3"
 
         # Load sound effects
         self.enemyhit_sfx = pg.mixer.Sound("resources/sounds/sfx/enemyhit.mp3")
@@ -2025,6 +2026,8 @@ class Stage2:
         battle_started = False
         hue = 0
 
+        self.defeat_display(BossSTwo(self.SCREEN, self.level))
+
         # while self.current_enemy_index < len(self.enemies):
         #     self.enemy = self.enemies[self.current_enemy_index]
         #     self.before_battle_display(self.enemy)
@@ -2038,6 +2041,11 @@ class Stage2:
             self.enemy = self.enemies[self.current_enemy_index]
             self.before_battle_display(self.enemy)
             battle_started = True
+
+            if self.enemy == self.enemies[3]:
+                self.inbattle_music = "resources/sounds/songs/s2boss.mp3"
+                pg.mixer.music.load(self.inbattle_music)
+                pg.mixer.music.play(-1)
 
             while True:
                 timepassed = self.clock.tick(60) / 1000.0
@@ -2199,6 +2207,9 @@ class Stage2:
         fade_alpha = 0  # Initial alpha value for fade-in effect
         fade_increment = 255 / (fade_duration * 60)  # Increment per frame (assuming 60 FPS)
 
+        pg.mixer.music.load(self.prebattle_music)
+        pg.mixer.music.play(-1)
+
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -2206,11 +2217,13 @@ class Stage2:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
+                        pg.mixer.music.stop()
                         from mapuantypingmania import GameMenu
                         game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
+                        pg.mixer.music.stop()
                         return  # Exit the display and start the battle
 
             self.SCREEN.blit(self.BG, (0, 0))
@@ -2222,26 +2235,60 @@ class Stage2:
                 center=(self.SCREEN.get_width() - 250, self.SCREEN.get_height() // 2))
             self.SCREEN.blit(talk_sprite, talk_sprite_rect)
 
-            # Draw the dialogue box with fade-in effect
-            small_font = pg.font.Font("resources/DejaVuSans.ttf", 20)
-            dlg_surf = small_font.render(minion.dialogue_text, True, pg.Color(251, 255, 52))
+            # Adjust font size based on the length of the dialogue text
+            dialogue_text = minion.dialogue_text
+            words = dialogue_text.split()
+            font_size = 20 if len(words) <= 7 else 15
+            small_font = pg.font.Font("resources/DejaVuSans.ttf", font_size)
+            dlg_surf = small_font.render(dialogue_text, True, pg.Color(250, 250, 250))
             dlg_surf.set_alpha(fade_alpha)
 
-            # Create a rectangular surface for the text box
-            box_width = int(dlg_surf.get_width() * 1.5) + 20
-            box_height = int(dlg_surf.get_height() * 1.5) + 20
-            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
-            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
-            text_box_rect = text_box.get_rect(center=(talk_sprite_rect.centerx, talk_sprite_rect.centery + 100))
+            # Calculate the bounding rectangle of the text surface and add padding
+            padding = 10
+            dlg_rect = pg.Rect(
+                self.SCREEN.get_width() // 2 - dlg_surf.get_width() // 2 - padding,
+                self.SCREEN.get_height() // 2 - dlg_surf.get_height() // 2 - padding,
+                dlg_surf.get_width() + padding * 2,
+                dlg_surf.get_height() + padding * 2
+            )
 
-            # Blit the text box and then the text centered in it
-            self.SCREEN.blit(text_box, text_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
+            # Define the points for the parallelogram shape
+            offset = 10
+            box_points = [
+                (dlg_rect.left, dlg_rect.top),
+                (dlg_rect.right, dlg_rect.top - offset),
+                (dlg_rect.right, dlg_rect.bottom - offset),
+                (dlg_rect.left, dlg_rect.bottom)
+            ]
+
+            shadow_points = [(x + 5, y + 5) for x, y in box_points]
+
+            # Draw the shadow first
+            pg.draw.polygon(self.SCREEN, (255, 204, 0, 150), shadow_points)
+
+            # Draw the main box
+            pg.draw.polygon(self.SCREEN, (26, 62, 112), box_points)
+
+            # Rotate the text surface to match the angle of the parallelogram
+            angle = math.degrees(math.atan2(offset, dlg_rect.width))
+            dlg_surf = pg.transform.rotate(dlg_surf, angle)
+
+            # Blit the text surface centered at its position
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_rect.center))
+
+            # Draw the top bar with fade-in effect
+            top_bar_height = 50
+            top_bar = pg.Surface((self.SCREEN.get_width(), top_bar_height), pg.SRCALPHA)
+            top_bar.fill((167, 57, 57, fade_alpha))
+            top_bar_shadow = pg.Surface((self.SCREEN.get_width(), top_bar_height), pg.SRCALPHA)
+            top_bar_shadow.fill((125, 28, 28, fade_alpha))
+            self.SCREEN.blit(top_bar_shadow, (0, 0))
+            self.SCREEN.blit(top_bar, (0, 0))
 
             # Draw the bottom bar with fade-in effect
             bottom_bar_height = 100
             bottom_bar = pg.Surface((self.SCREEN.get_width(), bottom_bar_height), pg.SRCALPHA)
-            bottom_bar.fill((25, 24, 77, fade_alpha))
+            bottom_bar.fill((167, 57, 57, fade_alpha))
             self.SCREEN.blit(bottom_bar, (0, self.SCREEN.get_height() - bottom_bar_height))
 
             # Draw the prompt to continue with fade-in effect
@@ -2255,97 +2302,20 @@ class Stage2:
             self.SCREEN.blit(prompt_surf_shadow, prompt_rect.move(2, 2))
             self.SCREEN.blit(prompt_surf, prompt_rect)
 
-            pg.display.flip()
-            fade_alpha = min(fade_alpha + fade_increment, 255)
-            pg.time.Clock().tick(60)
-
-    def display_victory(self):
-        if self.score > self.highscore:
-            self.highscore = self.score
-            write_score(self.highscore)
-
-        while True:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pg.quit()
-                    sys.exit()
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import GameMenu
-                        game = GameMenu()
-                        game.play()
-                    else:
-                        from introduction import Stage2Outro
-                        LoadingScreen(self.SCREEN).run()
-                        Stage2Outro(self.SCREEN).run()
-
-            # Prepare text surfaces and their positions
-            center = (self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2)
-            victory_surf = self.font.render("VICTORY!", True, pg.Color("white"))
-            highscore_text = f"Highscore: {self.highscore}"
-            highscore_surf = self.font.render(highscore_text, True, pg.Color("white"))
-            prompt_text = "Press any key for next stage, or Esc for main menu"
-            prompt_surf = self.font.render(prompt_text, True, pg.Color("white"))
-
-            victory_rect = victory_surf.get_rect(center=(center[0], center[1] - 40))
-            hs_rect = highscore_surf.get_rect(center=center)
-            prompt_rect = prompt_surf.get_rect(center=(center[0], center[1] + 40))
-
-            # Calculate the bounding rectangle of all text surfaces and add padding
-            union_rect = victory_rect.union(hs_rect).union(prompt_rect)
-            padding = 10
-            dlg_rect = pg.Rect(
-                union_rect.left - padding,
-                union_rect.top - padding,
-                union_rect.width + 2 * padding,
-                union_rect.height + 2 * padding
-            )
-
-            # Create the dialog box surface with an opaque yellow red color
-            dlg_box = pg.Surface((dlg_rect.width, dlg_rect.height))
-            dlg_box.fill((255, 193, 33))
-
-            # Draw background and dialog box
-            self.SCREEN.blit(self.BG, (0, 0))
-            self.SCREEN.blit(dlg_box, dlg_rect.topleft)
-            # Draw border if desired (optional)
-            pg.draw.rect(self.SCREEN, (255, 0, 0), dlg_rect, 3)
-
-            # Blit each text surface centered at their respective positions
-            self.SCREEN.blit(victory_surf, victory_rect)
-            self.SCREEN.blit(highscore_surf, hs_rect)
-            self.SCREEN.blit(prompt_surf, prompt_rect)
+            # Apply fade-in effect
+            if fade_alpha < 255:
+                fade_alpha = min(255, fade_alpha + fade_increment)
 
             pg.display.flip()
             self.clock.tick(60)
-
-    def draw_enemy_hitpoints(self):
-        hp_text = f"Enemy HP: {self.enemy.hitpoints:.1f}"
-        hp_surf = self.font.render(hp_text, True, (255, 255, 255))
-        hp_box = pg.Surface((hp_surf.get_width() + 10, hp_surf.get_height() + 10), pg.SRCALPHA)
-        hp_box.fill((27, 219, 24, 190))
-
-        # Initialize and update fade alpha for enemy hitpoints
-        if not hasattr(self, 'hp_alpha'):
-            self.hp_alpha = 0
-        if self.hp_alpha < 255:
-            self.hp_alpha += 5  # Adjust increment as needed for smoother or faster fade
-        hp_box.set_alpha(self.hp_alpha)
-
-        hp_box_rect = hp_box.get_rect(midtop=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 100))
-
-        self.SCREEN.blit(hp_box, hp_box_rect)
-        self.SCREEN.blit(hp_surf, hp_surf.get_rect(center=hp_box_rect.center))
-
-        # Draw a bar line to separate the hitpoints and prompt surface
-        pg.draw.line(self.SCREEN, (255, 255, 255),
-                     (0, self.SCREEN.get_height() - 50),
-                     (self.SCREEN.get_width(), self.SCREEN.get_height() - 50), 2)
 
     def defeat_display(self, minion):
         fade_duration = 1.0
         fade_alpha = 0
         fade_increment = 255 / (fade_duration * 60)
+
+        pg.mixer.music.load(self.victory_music)
+        pg.mixer.music.play(-1)
 
         while True:
             for event in pg.event.get():
@@ -2359,6 +2329,7 @@ class Stage2:
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
+                        pg.mixer.music.stop()
                         return
 
             self.SCREEN.blit(self.BG, (0, 0))
@@ -2370,24 +2341,64 @@ class Stage2:
             self.SCREEN.blit(defeat_sprite, defeat_sprite_rect)
 
             small_font = pg.font.Font("resources/DejaVuSans.ttf", 20)
-            dlg_surf = small_font.render(minion.defeat_text, True, pg.Color(251, 255, 52))
+            dlg_surf = small_font.render(minion.defeat_text, True, pg.Color(250, 250, 250))
             dlg_surf.set_alpha(fade_alpha)
 
-            # Create a rectangular surface for the text box
-            box_width = int(dlg_surf.get_width() * 1.5)
-            box_height = int(dlg_surf.get_height() * 1.5)
-            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
-            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
-            text_box_rect = text_box.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2))
+            # Calculate the bounding rectangle of the text surface and add padding
+            padding = 10
+            dlg_rect = pg.Rect(
+                0, 0,
+                dlg_surf.get_width() + padding * 2,
+                dlg_surf.get_height() + padding * 2
+            )
+            dlg_rect.centerx = self.SCREEN.get_width() // 2
+            dlg_rect.centery = defeat_sprite_rect.centery
 
-            # Blit the text box and then the text centered in it
-            self.SCREEN.blit(text_box, text_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
+            # Define the points for the parallelogram shape
+            offset = 10
+            box_points = [
+                (dlg_rect.left, dlg_rect.top),
+                (dlg_rect.right, dlg_rect.top - offset),
+                (dlg_rect.right, dlg_rect.bottom - offset),
+                (dlg_rect.left, dlg_rect.bottom)
+            ]
 
-            bottom_bar_height = 100
-            bottom_bar = pg.Surface((self.SCREEN.get_width(), bottom_bar_height), pg.SRCALPHA)
-            bottom_bar.fill((25, 24, 77, fade_alpha))
-            self.SCREEN.blit(bottom_bar, (0, self.SCREEN.get_height() - bottom_bar_height))
+            shadow_points = [(x + 5, y + 5) for x, y in box_points]
+
+            # Draw the shadow first
+            pg.draw.polygon(self.SCREEN, (255, 204, 0, 150), shadow_points)
+
+            # Draw the main box
+            pg.draw.polygon(self.SCREEN, (26, 62, 112), box_points)
+
+            # Rotate the text surface to match the angle of the parallelogram
+            angle = math.degrees(math.atan2(offset, dlg_rect.width))
+            dlg_surf = pg.transform.rotate(dlg_surf, angle)
+
+            # Blit the text surface centered at its position
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_rect.center))
+
+            # Draw the top and bottom bars with shadows
+            bar_height = 50
+            bar_color = (167, 57, 57)
+            shadow_color = (125, 28, 28)
+
+            # Top bar
+            top_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar.fill(bar_color)
+            top_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(top_bar_shadow, (0, 0))
+            self.SCREEN.blit(top_bar, (0, 0))
+
+            # Bottom bar
+            bottom_bar_y = self.SCREEN.get_height() - bar_height
+            bottom_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar.fill(bar_color)
+            bottom_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(bottom_bar_shadow, (0, bottom_bar_y))
+            self.SCREEN.blit(bottom_bar, (0, bottom_bar_y))
 
             prompt_text = "Press Enter to continue"
             prompt_surf = self.font.render(prompt_text, True, pg.Color("white"))
@@ -2395,12 +2406,139 @@ class Stage2:
             prompt_surf.set_alpha(fade_alpha)
             prompt_surf_shadow.set_alpha(fade_alpha)
             prompt_rect = prompt_surf.get_rect(
-                center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - bottom_bar_height // 2))
+                center=(self.SCREEN.get_width() // 2, bottom_bar_y + bar_height // 2))
             self.SCREEN.blit(prompt_surf_shadow, prompt_rect.move(2, 2))
             self.SCREEN.blit(prompt_surf, prompt_rect)
 
             if fade_alpha < 255:
                 fade_alpha = min(255, fade_alpha + fade_increment)
+
+            pg.display.flip()
+            self.clock.tick(60)
+
+    def display_victory(self):
+        if self.score > self.highscore:
+            self.highscore = self.score
+            write_score(self.highscore)
+
+        pg.mixer.music.load(self.victory_music)
+        pg.mixer.music.play(-1)
+
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
+                        game.play()
+                    else:
+                        LoadingScreen(self.SCREEN).run()
+                        from introduction import Stage1Outro
+                        outro = Stage1Outro(self.SCREEN)
+                        outro.run()
+
+            # Prepare text surfaces and their positions
+            center = (self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2)
+            victory_surf = self.font.render("VICTORY!", True, pg.Color("white"))
+            victory_shadow = self.font.render("VICTORY!", True, pg.Color("black"))
+            highscore_text = f"Highscore: {self.highscore}"
+            highscore_surf = self.font.render(highscore_text, True, pg.Color("white"))
+            highscore_shadow = self.font.render(highscore_text, True, pg.Color("black"))
+            prompt_text = "Press any key for next stage, or Esc for main menu"
+            prompt_surf = self.font.render(prompt_text, True, pg.Color("white"))
+            prompt_shadow = self.font.render(prompt_text, True, pg.Color("black"))
+
+            victory_rect = victory_surf.get_rect(center=(center[0], center[1] - 40))
+            hs_rect = highscore_surf.get_rect(center=center)
+            prompt_rect = prompt_surf.get_rect(center=(center[0], center[1] + 40))
+
+            # Calculate the bounding rectangle of all text surfaces and add padding
+            union_rect = victory_rect.union(hs_rect).union(prompt_rect)
+            padding = 10
+            dlg_rect = pg.Rect(
+                union_rect.left - padding,
+                union_rect.top - padding,
+                union_rect.width + 6 * padding,
+                union_rect.height + 6 * padding
+            )
+
+            # Center the dialog box on the screen
+            dlg_rect.center = center
+
+            # Define the points for the parallelogram shape
+            offset = 10
+            box_points = [
+                (dlg_rect.left, dlg_rect.top),
+                (dlg_rect.right, dlg_rect.top - offset),
+                (dlg_rect.right, dlg_rect.bottom - offset),
+                (dlg_rect.left, dlg_rect.bottom)
+            ]
+
+            shadow_points = [(x + 5, y + 5) for x, y in box_points]
+
+            # Create the dialog box surface with an opaque yellow red color
+            dlg_box = pg.Surface((dlg_rect.width, dlg_rect.height))
+            dlg_box.fill((255, 193, 33))
+
+            # Draw background and dialog box
+            self.SCREEN.blit(self.BG, (0, 0))
+
+            # Draw the shadow first
+            pg.draw.polygon(self.SCREEN, (255, 204, 0, 150), shadow_points)
+
+            # Draw the main box
+            pg.draw.polygon(self.SCREEN, (26, 62, 112), box_points)
+
+            # Draw border as a parallelogram
+            border_padding = 5
+            border_points = [
+                (dlg_rect.left + border_padding, dlg_rect.top + border_padding),
+                (dlg_rect.right - border_padding, dlg_rect.top - offset + border_padding),
+                (dlg_rect.right - border_padding, dlg_rect.bottom - offset - border_padding),
+                (dlg_rect.left + border_padding, dlg_rect.bottom - border_padding)
+            ]
+            pg.draw.polygon(self.SCREEN, (211, 200, 74), border_points, 3)
+
+            # Rotate the text surfaces to match the angle of the parallelogram
+            angle = math.degrees(math.atan2(offset, dlg_rect.width))
+            victory_surf = pg.transform.rotate(victory_surf, angle)
+            victory_shadow = pg.transform.rotate(victory_shadow, angle)
+            highscore_surf = pg.transform.rotate(highscore_surf, angle)
+            highscore_shadow = pg.transform.rotate(highscore_shadow, angle)
+            prompt_surf = pg.transform.rotate(prompt_surf, angle)
+            prompt_shadow = pg.transform.rotate(prompt_shadow, angle)
+
+            # Blit each text surface centered at their respective positions
+            self.SCREEN.blit(victory_shadow, victory_rect.move(2, 2))
+            self.SCREEN.blit(victory_surf, victory_rect)
+            self.SCREEN.blit(highscore_shadow, hs_rect.move(2, 2))
+            self.SCREEN.blit(highscore_surf, hs_rect)
+            self.SCREEN.blit(prompt_shadow, prompt_rect.move(2, 2))
+            self.SCREEN.blit(prompt_surf, prompt_rect)
+
+            # Draw the top and bottom bars with shadows
+            bar_height = 50
+            bar_color = (167, 57, 57)
+            shadow_color = (125, 28, 28)
+
+            # Top bar
+            top_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar.fill(bar_color)
+            top_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(top_bar_shadow, (0, 0))
+            self.SCREEN.blit(top_bar, (0, 0))
+
+            # Bottom bar
+            bottom_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar.fill(bar_color)
+            bottom_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(bottom_bar_shadow, (0, self.SCREEN.get_height() - bar_height))
+            self.SCREEN.blit(bottom_bar, (0, self.SCREEN.get_height() - bar_height))
 
             pg.display.flip()
             self.clock.tick(60)
@@ -2485,35 +2623,71 @@ class Stage2:
     def generate_prompt_surf(self):
         width = self.SCREEN.get_width()
         surf = pg.Surface((width, 50), pg.SRCALPHA)
-        surf.fill((25, 24, 77))
+        shadow_surf = pg.Surface((width, 10), pg.SRCALPHA)
 
-        if not hasattr(self, 'prompt_alpha'):
-            self.prompt_alpha = 0
-        if self.prompt_alpha < 255:
-            self.prompt_alpha += 1
-        surf.set_alpha(self.prompt_alpha)
+        # Create shadow
+        shadow_surf.fill((167, 57, 57, 79))
+        surf.fill((125, 28, 35))
+        surf.set_alpha(255)
 
-        color = pg.Color(255, 253, 11) if any(w.startswith(self.prompt_content) for w in self.current_words) \
-            else pg.Color(214, 24, 24)
+        self.SCREEN.blit(surf, (0, 0))
+        surf.blit(shadow_surf, (0, -1))
+
+        color = pg.Color("#ff6600") if any(w.startswith(self.prompt_content) for w in self.current_words) else pg.Color(
+            "#ffffff")
         rendered = self.font.render(self.prompt_content, True, color)
 
         # Create shadow text
-        shadow_color = pg.Color(180, 200, 255)
-        shadow_rendered = self.font.render(self.prompt_content, True, shadow_color)
+        shadow_rendered = self.font.render(self.prompt_content, True, pg.Color("black"))
 
         # Center the prompt text horizontally on the surface
         rect = rendered.get_rect(centerx=width // 2, centery=25)
-        shadow_rect = shadow_rendered.get_rect(centerx=width // 2 + 2, centery=26)  # Slightly offset for shadow effect
+        shadow_rect = shadow_rendered.get_rect(centerx=width // 2 - 2, centery=25 - 2)  # Offset for shadow effect
 
         # Blit shadow first, then main text
         surf.blit(shadow_rendered, shadow_rect)
         surf.blit(rendered, rect)
 
+        # Draw a bar to indicate the position
+        bar_width = 2
+        bar_height = 40
+        bar_x = rect.right + 5
+        bar_y = 5
+        pg.draw.rect(surf, pg.Color("red"), (bar_x, bar_y, bar_width, bar_height))
+
         return surf
+
+    def draw_enemy_hitpoints(self):
+        hp_text = f"Enemy HP: {self.enemy.hitpoints:.1f}"
+        hp_text_shadow = self.font.render(hp_text, True, pg.Color("black"))
+        hp_surf = self.font.render(hp_text, True, (255, 255, 255))
+        hp_box = pg.Surface((hp_surf.get_width() + 10, hp_surf.get_height() + 10), pg.SRCALPHA)
+        hp_box.fill((26, 62, 112, 190))
+
+        # Initialize and update fade alpha for enemy hitpoints
+        if not hasattr(self, 'hp_alpha'):
+            self.hp_alpha = 0
+        if self.hp_alpha < 255:
+            self.hp_alpha += 5  # Adjust increment as needed for smoother or faster fade
+        hp_box.set_alpha(self.hp_alpha)
+
+        hp_box_rect = hp_box.get_rect(midtop=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 100))
+
+        # Create shadow of box
+        shadow_offset = 2
+        shadow_box = pg.Surface((hp_box.get_width(), hp_box.get_height()), pg.SRCALPHA)
+        shadow_box.fill((224, 180, 0, 100))  # Darker color for shadow
+        shadow_box_rect = hp_box_rect.move(shadow_offset, shadow_offset)
+
+        # Blit shadow first, then the hitpoint box
+        self.SCREEN.blit(shadow_box, shadow_box_rect)
+        self.SCREEN.blit(hp_text_shadow, hp_box_rect.move(2,2))
+        self.SCREEN.blit(hp_box, hp_box_rect)
+        self.SCREEN.blit(hp_surf, hp_surf.get_rect(center=hp_box_rect.center))
 
     def draw_ui(self):
         top_box = pg.Surface((self.SCREEN.get_width(), 40), pg.SRCALPHA)
-        top_box.fill((194, 31, 31))
+        top_box.fill((54, 54, 54, 200))  # Adjusted background color with opacity
         top_box_rect = top_box.get_rect()
         if not hasattr(self, 'ui_alpha'):
             self.ui_alpha = 0
@@ -2524,12 +2698,13 @@ class Stage2:
         top_box.set_alpha(self.ui_alpha)
         self.SCREEN.blit(top_box, top_box_rect)
 
-        score_surf = self.font.render(f"Score: {self.score}",
-                                      True, (255, 255, 255))
-        health_surf = self.font.render(f"Health: {self.health}",
-                                       True, (255, 255, 255))
-        enemy_name = self.font.render(f"Enemy: THE INTELLECTUAL",
-                                      True, (255, 255, 255))
+        # Render the main text and its shadow
+        score_surf = self.font.render(f"Score: {self.score}", True, (255, 255, 255))
+        health_surf = self.font.render(f"Health: {self.health}", True, (255, 255, 255))
+        enemy_name = self.font.render(f"Enemy: {self.enemy.name}", True, (255, 255, 255))
+        score_shadow = self.font.render(f"Score: {self.score}", True, (0, 0, 0))
+        health_shadow = self.font.render(f"Health: {self.health}", True, (0, 0, 0))
+        enemy_shadow = self.font.render(f"Enemy: {self.enemy.name}", True, (0, 0, 0))
 
         # Calculate positions for the text
         screen_width = self.SCREEN.get_width()
@@ -2537,6 +2712,13 @@ class Stage2:
         health_pos = (screen_width // 3, 10)
         enemy_pos = (2 * screen_width // 3, 10)
 
+        # Offset for the shadow effect
+        shadow_offset = (2, 2)
+
+        # Blit the shadow first, then the main text
+        self.SCREEN.blit(score_shadow, (score_pos[0] + shadow_offset[0], score_pos[1] + shadow_offset[1]))
+        self.SCREEN.blit(health_shadow, (health_pos[0] + shadow_offset[0], health_pos[1] + shadow_offset[1]))
+        self.SCREEN.blit(enemy_shadow, (enemy_pos[0] + shadow_offset[0], enemy_pos[1] + shadow_offset[1]))
         self.SCREEN.blit(score_surf, score_pos)
         self.SCREEN.blit(health_surf, health_pos)
         self.SCREEN.blit(enemy_name, enemy_pos)
@@ -2581,6 +2763,7 @@ class Stage2Enemies:
         self.start_timer = 2.5
         self.is_hit = False
         self.sprite_alpha = 0
+        self.name = ""
 
         self.normal_sprite = pg.image.load(normal_sprite_path).convert_alpha()
         self.hit_sprite = pg.image.load(hit_sprite_path).convert_alpha()
@@ -2713,6 +2896,7 @@ class Minion1STwo(Stage2Enemies):
         self.dialogue_text = "\"Prepare yourself for the battle!\""
         self.defeat_text = "\"Congrats!\""
         self.word_speed = 1.4
+        self.name = "Contestant Bogart"
 
 class Minion2STwo(Stage2Enemies):
     def __init__(self, screen, level):
@@ -2721,6 +2905,7 @@ class Minion2STwo(Stage2Enemies):
         self.dialogue_text = "\"Prepare yourself for the battle!\""
         self.defeat_text = "\"Congrats!\""
         self.word_speed = 1.6
+        self.name = "Contestant Pedro"
 
 class Minion3STwo(Stage2Enemies):
     def __init__(self, screen, level):
@@ -2729,6 +2914,7 @@ class Minion3STwo(Stage2Enemies):
         self.dialogue_text = "\"Prepare yourself for the battle!\""
         self.defeat_text = "\"Congrats!\""
         self.word_speed = 1.8
+        self.name = "Contestant Farje"
 
 class BossSTwo(Stage2Enemies):
     def __init__(self, screen, level):
@@ -2745,12 +2931,12 @@ class BossSTwo(Stage2Enemies):
         self.max_health = self.hitpoints  # Store the initial maximum health
         self.word_speed = 3.0 # Boss has a faster word speed
         self.sprite_rect.centery = self.height // 2 # Adjusted to align with the prompt surf
+        self.name = "THE INTELLECTUAL"
 
     def get_max_health(self):
         return self.max_health
 
 """STAGE 2 END----------------------------------------------------------------------------------------------------------
-
 
 STAGE 3 START--------------------------------------------------------------------------------------------------------"""
 class Stage3:
@@ -2786,9 +2972,10 @@ class Stage3:
         self.bonus_word_counter = 0
 
         # Load background music
-        pg.mixer.init()
-        self.tutorial_prebattle_music = "resources/sounds/songs/tutorial_prebattle.mp3"
-        self.inbattle_music = "resources/sounds/songs/tutorial_inbattle.mp3"
+        self.inbattle_music = "resources/sounds/songs/s3minion.mp3"
+        self.prebattle_music = "resources/sounds/songs/s3_prebattle.mp3"
+        self.victory_music = "resources/sounds/songs/s1victory.mp3"
+        self.mamemmy_music = "resources/sounds/songs/mamemmy.mp3"
 
         # Load sound effects
         self.enemyhit_sfx = pg.mixer.Sound("resources/sounds/sfx/enemyhit.mp3")
@@ -2805,19 +2992,28 @@ class Stage3:
         battle_started = False
         hue = 0
 
-        # while self.current_enemy_index < len(self.enemies):
-        #     self.enemy = self.enemies[self.current_enemy_index]
-        #     self.before_battle_display(self.enemy)
-        #     battle_started = True
-        self.current_enemy_index = 3
-        if self.current_enemy_index == 3:
+        self.maam_emmy_display()
+
+        while self.current_enemy_index < len(self.enemies):
             self.enemy = self.enemies[self.current_enemy_index]
-            self.maam_emmy_display()
             self.before_battle_display(self.enemy)
             battle_started = True
 
+        # self.current_enemy_index = 3
+        # if self.current_enemy_index == 3:
+        #     self.enemy = self.enemies[self.current_enemy_index]
+        #     self.maam_emmy_display()
+        #     self.before_battle_display(self.enemy)
+        #     battle_started = True
+
             pg.mixer.music.load(self.inbattle_music)
             pg.mixer.music.play(-1)
+
+
+            if self.enemy == self.enemies[3]:
+                self.inbattle_music = "resources/sounds/songs/s3boss.mp3"
+                pg.mixer.music.load(self.inbattle_music)
+                pg.mixer.music.play(-1)
 
             while True:
                 timepassed = self.clock.tick(60) / 1000.0
@@ -2978,6 +3174,9 @@ class Stage3:
         fade_alpha = 0
         fade_increment = 5  # Adjust this value to control the speed of the fade-in effect
 
+        pg.mixer.music.load(self.mamemmy_music)
+        pg.mixer.music.play(-1)
+
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -3008,7 +3207,7 @@ class Stage3:
             # Draw the dialogue box with shadow
             dialogue_text = ("\"If you quit right now, you can't have anything you want. "
                              "So do your best\"")
-            small_font = pg.font.Font("resources/DejaVuSans.ttf", 25)
+            small_font = pg.font.Font("resources/DejaVuSans.ttf", 22)
             dlg_surf = small_font.render(dialogue_text, True, pg.Color("white"))
             dlg_shadow = small_font.render(dialogue_text, True, pg.Color("black"))
 
@@ -3094,6 +3293,9 @@ class Stage3:
         fade_alpha = 0  # Initial alpha value for fade-in effect
         fade_increment = 255 / (fade_duration * 60)  # Increment per frame (assuming 60 FPS)
 
+        pg.mixer.music.load(self.prebattle_music)
+        pg.mixer.music.play(-1)
+
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -3101,11 +3303,13 @@ class Stage3:
                     sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_ESCAPE:
+                        pg.mixer.music.stop()
                         from mapuantypingmania import GameMenu
                         game = GameMenu()
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
+                        pg.mixer.music.stop()
                         return  # Exit the display and start the battle
 
             self.SCREEN.blit(self.BG, (0, 0))
@@ -3117,26 +3321,60 @@ class Stage3:
                 center=(self.SCREEN.get_width() - 250, self.SCREEN.get_height() // 2))
             self.SCREEN.blit(talk_sprite, talk_sprite_rect)
 
-            # Draw the dialogue box with fade-in effect
-            small_font = pg.font.Font("resources/DejaVuSans.ttf", 20)
-            dlg_surf = small_font.render(minion.dialogue_text, True, pg.Color(251, 255, 52))
+            # Adjust font size based on the length of the dialogue text
+            dialogue_text = minion.dialogue_text
+            words = dialogue_text.split()
+            font_size = 20 if len(words) <= 7 else 15
+            small_font = pg.font.Font("resources/DejaVuSans.ttf", font_size)
+            dlg_surf = small_font.render(dialogue_text, True, pg.Color(250, 250, 250))
             dlg_surf.set_alpha(fade_alpha)
 
-            # Create a rectangular surface for the text box
-            box_width = int(dlg_surf.get_width() * 1.5)
-            box_height = int(dlg_surf.get_height() * 1.5)
-            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
-            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
-            text_box_rect = text_box.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2))
+            # Calculate the bounding rectangle of the text surface and add padding
+            padding = 10
+            dlg_rect = pg.Rect(
+                self.SCREEN.get_width() // 2 - dlg_surf.get_width() // 2 - padding,
+                self.SCREEN.get_height() // 2 - dlg_surf.get_height() // 2 - padding,
+                dlg_surf.get_width() + padding * 2,
+                dlg_surf.get_height() + padding * 2
+            )
 
-            # Blit the text box and then the text centered in it
-            self.SCREEN.blit(text_box, text_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
+            # Define the points for the parallelogram shape
+            offset = 10
+            box_points = [
+                (dlg_rect.left, dlg_rect.top),
+                (dlg_rect.right, dlg_rect.top - offset),
+                (dlg_rect.right, dlg_rect.bottom - offset),
+                (dlg_rect.left, dlg_rect.bottom)
+            ]
+
+            shadow_points = [(x + 5, y + 5) for x, y in box_points]
+
+            # Draw the shadow first
+            pg.draw.polygon(self.SCREEN, (255, 204, 0, 150), shadow_points)
+
+            # Draw the main box
+            pg.draw.polygon(self.SCREEN, (26, 62, 112), box_points)
+
+            # Rotate the text surface to match the angle of the parallelogram
+            angle = math.degrees(math.atan2(offset, dlg_rect.width))
+            dlg_surf = pg.transform.rotate(dlg_surf, angle)
+
+            # Blit the text surface centered at its position
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_rect.center))
+
+            # Draw the top bar with fade-in effect
+            top_bar_height = 50
+            top_bar = pg.Surface((self.SCREEN.get_width(), top_bar_height), pg.SRCALPHA)
+            top_bar.fill((167, 57, 57, fade_alpha))
+            top_bar_shadow = pg.Surface((self.SCREEN.get_width(), top_bar_height), pg.SRCALPHA)
+            top_bar_shadow.fill((125, 28, 28, fade_alpha))
+            self.SCREEN.blit(top_bar_shadow, (0, 0))
+            self.SCREEN.blit(top_bar, (0, 0))
 
             # Draw the bottom bar with fade-in effect
             bottom_bar_height = 100
             bottom_bar = pg.Surface((self.SCREEN.get_width(), bottom_bar_height), pg.SRCALPHA)
-            bottom_bar.fill((25, 24, 77, fade_alpha))
+            bottom_bar.fill((167, 57, 57, fade_alpha))
             self.SCREEN.blit(bottom_bar, (0, self.SCREEN.get_height() - bottom_bar_height))
 
             # Draw the prompt to continue with fade-in effect
@@ -3150,100 +3388,20 @@ class Stage3:
             self.SCREEN.blit(prompt_surf_shadow, prompt_rect.move(2, 2))
             self.SCREEN.blit(prompt_surf, prompt_rect)
 
-            pg.display.flip()
-            fade_alpha = min(fade_alpha + fade_increment, 255)
-            pg.time.Clock().tick(60)
-
-    def display_victory(self):
-        if self.score > self.highscore:
-            self.highscore = self.score
-            write_score(self.highscore)
-
-        while True:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pg.quit()
-                    sys.exit()
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_ESCAPE:
-                        from mapuantypingmania import GameMenu
-                        game = GameMenu()
-                        game.play()
-                    else:
-                        from endings import Ending
-                        LoadingScreen(self.SCREEN).run()
-                        from introduction import Stage3Outro
-                        Stage3Outro(self.SCREEN).run()
-                        ending = Ending(self.SCREEN)
-                        ending.run()
-
-            # Prepare text surfaces and their positions
-            center = (self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2)
-            victory_surf = self.font.render("VICTORY!", True, pg.Color("white"))
-            highscore_text = f"Highscore: {self.highscore}"
-            highscore_surf = self.font.render(highscore_text, True, pg.Color("white"))
-            prompt_text = "Press any key for next stage, or Esc for main menu"
-            prompt_surf = self.font.render(prompt_text, True, pg.Color("white"))
-
-            victory_rect = victory_surf.get_rect(center=(center[0], center[1] - 40))
-            hs_rect = highscore_surf.get_rect(center=center)
-            prompt_rect = prompt_surf.get_rect(center=(center[0], center[1] + 40))
-
-            # Calculate the bounding rectangle of all text surfaces and add padding
-            union_rect = victory_rect.union(hs_rect).union(prompt_rect)
-            padding = 10
-            dlg_rect = pg.Rect(
-                union_rect.left - padding,
-                union_rect.top - padding,
-                union_rect.width + 2 * padding,
-                union_rect.height + 2 * padding
-            )
-
-            # Create the dialog box surface with an opaque yellow red color
-            dlg_box = pg.Surface((dlg_rect.width, dlg_rect.height))
-            dlg_box.fill((255, 193, 33))
-
-            # Draw background and dialog box
-            self.SCREEN.blit(self.BG, (0, 0))
-            self.SCREEN.blit(dlg_box, dlg_rect.topleft)
-            # Draw border if desired (optional)
-            pg.draw.rect(self.SCREEN, (255, 0, 0), dlg_rect, 3)
-
-            # Blit each text surface centered at their respective positions
-            self.SCREEN.blit(victory_surf, victory_rect)
-            self.SCREEN.blit(highscore_surf, hs_rect)
-            self.SCREEN.blit(prompt_surf, prompt_rect)
+            # Apply fade-in effect
+            if fade_alpha < 255:
+                fade_alpha = min(255, fade_alpha + fade_increment)
 
             pg.display.flip()
             self.clock.tick(60)
-
-    def draw_enemy_hitpoints(self):
-        hp_text = f"Enemy HP: {self.enemy.hitpoints:.1f}"
-        hp_surf = self.font.render(hp_text, True, (255, 255, 255))
-        hp_box = pg.Surface((hp_surf.get_width() + 10, hp_surf.get_height() + 10), pg.SRCALPHA)
-        hp_box.fill((27, 219, 24, 190))
-
-        # Initialize and update fade alpha for enemy hitpoints
-        if not hasattr(self, 'hp_alpha'):
-            self.hp_alpha = 0
-        if self.hp_alpha < 255:
-            self.hp_alpha += 5  # Adjust increment as needed for smoother or faster fade
-        hp_box.set_alpha(self.hp_alpha)
-
-        hp_box_rect = hp_box.get_rect(midtop=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 100))
-
-        self.SCREEN.blit(hp_box, hp_box_rect)
-        self.SCREEN.blit(hp_surf, hp_surf.get_rect(center=hp_box_rect.center))
-
-        # Draw a bar line to separate the hitpoints and prompt surface
-        pg.draw.line(self.SCREEN, (255, 255, 255),
-                     (0, self.SCREEN.get_height() - 50),
-                     (self.SCREEN.get_width(), self.SCREEN.get_height() - 50), 2)
 
     def defeat_display(self, minion):
         fade_duration = 1.0
         fade_alpha = 0
         fade_increment = 255 / (fade_duration * 60)
+
+        pg.mixer.music.load(self.victory_music)
+        pg.mixer.music.play(-1)
 
         while True:
             for event in pg.event.get():
@@ -3257,6 +3415,7 @@ class Stage3:
                         game.main_Menu()
                         return
                     elif event.key == pg.K_RETURN:
+                        pg.mixer.music.stop()
                         return
 
             self.SCREEN.blit(self.BG, (0, 0))
@@ -3268,24 +3427,64 @@ class Stage3:
             self.SCREEN.blit(defeat_sprite, defeat_sprite_rect)
 
             small_font = pg.font.Font("resources/DejaVuSans.ttf", 20)
-            dlg_surf = small_font.render(minion.defeat_text, True, pg.Color(251, 255, 52))
+            dlg_surf = small_font.render(minion.defeat_text, True, pg.Color(250, 250, 250))
             dlg_surf.set_alpha(fade_alpha)
 
-            # Create a rectangular surface for the text box
-            box_width = int(dlg_surf.get_width() * 1.5)
-            box_height = int(dlg_surf.get_height() * 1.5)
-            text_box = pg.Surface((box_width, box_height), pg.SRCALPHA)
-            text_box.fill((0, 0, 0, 150))  # Semi-transparent black background
-            text_box_rect = text_box.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2))
+            # Calculate the bounding rectangle of the text surface and add padding
+            padding = 10
+            dlg_rect = pg.Rect(
+                0, 0,
+                dlg_surf.get_width() + padding * 2,
+                dlg_surf.get_height() + padding * 2
+            )
+            dlg_rect.centerx = self.SCREEN.get_width() // 2
+            dlg_rect.centery = defeat_sprite_rect.centery
 
-            # Blit the text box and then the text centered in it
-            self.SCREEN.blit(text_box, text_box_rect)
-            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=text_box_rect.center))
+            # Define the points for the parallelogram shape
+            offset = 10
+            box_points = [
+                (dlg_rect.left, dlg_rect.top),
+                (dlg_rect.right, dlg_rect.top - offset),
+                (dlg_rect.right, dlg_rect.bottom - offset),
+                (dlg_rect.left, dlg_rect.bottom)
+            ]
 
-            bottom_bar_height = 100
-            bottom_bar = pg.Surface((self.SCREEN.get_width(), bottom_bar_height), pg.SRCALPHA)
-            bottom_bar.fill((25, 24, 77, fade_alpha))
-            self.SCREEN.blit(bottom_bar, (0, self.SCREEN.get_height() - bottom_bar_height))
+            shadow_points = [(x + 5, y + 5) for x, y in box_points]
+
+            # Draw the shadow first
+            pg.draw.polygon(self.SCREEN, (255, 204, 0, 150), shadow_points)
+
+            # Draw the main box
+            pg.draw.polygon(self.SCREEN, (26, 62, 112), box_points)
+
+            # Rotate the text surface to match the angle of the parallelogram
+            angle = math.degrees(math.atan2(offset, dlg_rect.width))
+            dlg_surf = pg.transform.rotate(dlg_surf, angle)
+
+            # Blit the text surface centered at its position
+            self.SCREEN.blit(dlg_surf, dlg_surf.get_rect(center=dlg_rect.center))
+
+            # Draw the top and bottom bars with shadows
+            bar_height = 50
+            bar_color = (167, 57, 57)
+            shadow_color = (125, 28, 28)
+
+            # Top bar
+            top_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar.fill(bar_color)
+            top_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(top_bar_shadow, (0, 0))
+            self.SCREEN.blit(top_bar, (0, 0))
+
+            # Bottom bar
+            bottom_bar_y = self.SCREEN.get_height() - bar_height
+            bottom_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar.fill(bar_color)
+            bottom_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(bottom_bar_shadow, (0, bottom_bar_y))
+            self.SCREEN.blit(bottom_bar, (0, bottom_bar_y))
 
             prompt_text = "Press Enter to continue"
             prompt_surf = self.font.render(prompt_text, True, pg.Color("white"))
@@ -3293,12 +3492,139 @@ class Stage3:
             prompt_surf.set_alpha(fade_alpha)
             prompt_surf_shadow.set_alpha(fade_alpha)
             prompt_rect = prompt_surf.get_rect(
-                center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - bottom_bar_height // 2))
+                center=(self.SCREEN.get_width() // 2, bottom_bar_y + bar_height // 2))
             self.SCREEN.blit(prompt_surf_shadow, prompt_rect.move(2, 2))
             self.SCREEN.blit(prompt_surf, prompt_rect)
 
             if fade_alpha < 255:
                 fade_alpha = min(255, fade_alpha + fade_increment)
+
+            pg.display.flip()
+            self.clock.tick(60)
+
+    def display_victory(self):
+        if self.score > self.highscore:
+            self.highscore = self.score
+            write_score(self.highscore)
+
+        pg.mixer.music.load(self.victory_music)
+        pg.mixer.music.play(-1)
+
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        from mapuantypingmania import GameMenu
+                        game = GameMenu()
+                        game.play()
+                    else:
+                        LoadingScreen(self.SCREEN).run()
+                        from introduction import Stage1Outro
+                        outro = Stage1Outro(self.SCREEN)
+                        outro.run()
+
+            # Prepare text surfaces and their positions
+            center = (self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2)
+            victory_surf = self.font.render("VICTORY!", True, pg.Color("white"))
+            victory_shadow = self.font.render("VICTORY!", True, pg.Color("black"))
+            highscore_text = f"Highscore: {self.highscore}"
+            highscore_surf = self.font.render(highscore_text, True, pg.Color("white"))
+            highscore_shadow = self.font.render(highscore_text, True, pg.Color("black"))
+            prompt_text = "Press any key for next stage, or Esc for main menu"
+            prompt_surf = self.font.render(prompt_text, True, pg.Color("white"))
+            prompt_shadow = self.font.render(prompt_text, True, pg.Color("black"))
+
+            victory_rect = victory_surf.get_rect(center=(center[0], center[1] - 40))
+            hs_rect = highscore_surf.get_rect(center=center)
+            prompt_rect = prompt_surf.get_rect(center=(center[0], center[1] + 40))
+
+            # Calculate the bounding rectangle of all text surfaces and add padding
+            union_rect = victory_rect.union(hs_rect).union(prompt_rect)
+            padding = 10
+            dlg_rect = pg.Rect(
+                union_rect.left - padding,
+                union_rect.top - padding,
+                union_rect.width + 6 * padding,
+                union_rect.height + 6 * padding
+            )
+
+            # Center the dialog box on the screen
+            dlg_rect.center = center
+
+            # Define the points for the parallelogram shape
+            offset = 10
+            box_points = [
+                (dlg_rect.left, dlg_rect.top),
+                (dlg_rect.right, dlg_rect.top - offset),
+                (dlg_rect.right, dlg_rect.bottom - offset),
+                (dlg_rect.left, dlg_rect.bottom)
+            ]
+
+            shadow_points = [(x + 5, y + 5) for x, y in box_points]
+
+            # Create the dialog box surface with an opaque yellow red color
+            dlg_box = pg.Surface((dlg_rect.width, dlg_rect.height))
+            dlg_box.fill((255, 193, 33))
+
+            # Draw background and dialog box
+            self.SCREEN.blit(self.BG, (0, 0))
+
+            # Draw the shadow first
+            pg.draw.polygon(self.SCREEN, (255, 204, 0, 150), shadow_points)
+
+            # Draw the main box
+            pg.draw.polygon(self.SCREEN, (26, 62, 112), box_points)
+
+            # Draw border as a parallelogram
+            border_padding = 5
+            border_points = [
+                (dlg_rect.left + border_padding, dlg_rect.top + border_padding),
+                (dlg_rect.right - border_padding, dlg_rect.top - offset + border_padding),
+                (dlg_rect.right - border_padding, dlg_rect.bottom - offset - border_padding),
+                (dlg_rect.left + border_padding, dlg_rect.bottom - border_padding)
+            ]
+            pg.draw.polygon(self.SCREEN, (211, 200, 74), border_points, 3)
+
+            # Rotate the text surfaces to match the angle of the parallelogram
+            angle = math.degrees(math.atan2(offset, dlg_rect.width))
+            victory_surf = pg.transform.rotate(victory_surf, angle)
+            victory_shadow = pg.transform.rotate(victory_shadow, angle)
+            highscore_surf = pg.transform.rotate(highscore_surf, angle)
+            highscore_shadow = pg.transform.rotate(highscore_shadow, angle)
+            prompt_surf = pg.transform.rotate(prompt_surf, angle)
+            prompt_shadow = pg.transform.rotate(prompt_shadow, angle)
+
+            # Blit each text surface centered at their respective positions
+            self.SCREEN.blit(victory_shadow, victory_rect.move(2, 2))
+            self.SCREEN.blit(victory_surf, victory_rect)
+            self.SCREEN.blit(highscore_shadow, hs_rect.move(2, 2))
+            self.SCREEN.blit(highscore_surf, hs_rect)
+            self.SCREEN.blit(prompt_shadow, prompt_rect.move(2, 2))
+            self.SCREEN.blit(prompt_surf, prompt_rect)
+
+            # Draw the top and bottom bars with shadows
+            bar_height = 50
+            bar_color = (167, 57, 57)
+            shadow_color = (125, 28, 28)
+
+            # Top bar
+            top_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar.fill(bar_color)
+            top_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            top_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(top_bar_shadow, (0, 0))
+            self.SCREEN.blit(top_bar, (0, 0))
+
+            # Bottom bar
+            bottom_bar = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar.fill(bar_color)
+            bottom_bar_shadow = pg.Surface((self.SCREEN.get_width(), bar_height), pg.SRCALPHA)
+            bottom_bar_shadow.fill(shadow_color)
+            self.SCREEN.blit(bottom_bar_shadow, (0, self.SCREEN.get_height() - bar_height))
+            self.SCREEN.blit(bottom_bar, (0, self.SCREEN.get_height() - bar_height))
 
             pg.display.flip()
             self.clock.tick(60)
@@ -3383,35 +3709,71 @@ class Stage3:
     def generate_prompt_surf(self):
         width = self.SCREEN.get_width()
         surf = pg.Surface((width, 50), pg.SRCALPHA)
-        surf.fill((25, 24, 77))
+        shadow_surf = pg.Surface((width, 10), pg.SRCALPHA)
 
-        if not hasattr(self, 'prompt_alpha'):
-            self.prompt_alpha = 0
-        if self.prompt_alpha < 255:
-            self.prompt_alpha += 1
-        surf.set_alpha(self.prompt_alpha)
+        # Create shadow
+        shadow_surf.fill((167, 57, 57, 79))
+        surf.fill((125, 28, 35))
+        surf.set_alpha(255)
 
-        color = pg.Color(255, 253, 11) if any(w.startswith(self.prompt_content) for w in self.current_words) \
-            else pg.Color(214, 24, 24)
+        self.SCREEN.blit(surf, (0, 0))
+        surf.blit(shadow_surf, (0, -1))
+
+        color = pg.Color("#ff6600") if any(w.startswith(self.prompt_content) for w in self.current_words) else pg.Color(
+            "#ffffff")
         rendered = self.font.render(self.prompt_content, True, color)
 
         # Create shadow text
-        shadow_color = pg.Color(180, 200, 255)
-        shadow_rendered = self.font.render(self.prompt_content, True, shadow_color)
+        shadow_rendered = self.font.render(self.prompt_content, True, pg.Color("black"))
 
         # Center the prompt text horizontally on the surface
         rect = rendered.get_rect(centerx=width // 2, centery=25)
-        shadow_rect = shadow_rendered.get_rect(centerx=width // 2 + 2, centery=26)  # Slightly offset for shadow effect
+        shadow_rect = shadow_rendered.get_rect(centerx=width // 2 - 2, centery=25 - 2)  # Offset for shadow effect
 
         # Blit shadow first, then main text
         surf.blit(shadow_rendered, shadow_rect)
         surf.blit(rendered, rect)
 
+        # Draw a bar to indicate the position
+        bar_width = 2
+        bar_height = 40
+        bar_x = rect.right + 5
+        bar_y = 5
+        pg.draw.rect(surf, pg.Color("red"), (bar_x, bar_y, bar_width, bar_height))
+
         return surf
+
+    def draw_enemy_hitpoints(self):
+        hp_text = f"Enemy HP: {self.enemy.hitpoints:.1f}"
+        hp_text_shadow = self.font.render(hp_text, True, pg.Color("black"))
+        hp_surf = self.font.render(hp_text, True, (255, 255, 255))
+        hp_box = pg.Surface((hp_surf.get_width() + 10, hp_surf.get_height() + 10), pg.SRCALPHA)
+        hp_box.fill((26, 62, 112, 190))
+
+        # Initialize and update fade alpha for enemy hitpoints
+        if not hasattr(self, 'hp_alpha'):
+            self.hp_alpha = 0
+        if self.hp_alpha < 255:
+            self.hp_alpha += 5  # Adjust increment as needed for smoother or faster fade
+        hp_box.set_alpha(self.hp_alpha)
+
+        hp_box_rect = hp_box.get_rect(midtop=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 100))
+
+        # Create shadow of box
+        shadow_offset = 2
+        shadow_box = pg.Surface((hp_box.get_width(), hp_box.get_height()), pg.SRCALPHA)
+        shadow_box.fill((224, 180, 0, 100))  # Darker color for shadow
+        shadow_box_rect = hp_box_rect.move(shadow_offset, shadow_offset)
+
+        # Blit shadow first, then the hitpoint box
+        self.SCREEN.blit(shadow_box, shadow_box_rect)
+        self.SCREEN.blit(hp_text_shadow, hp_box_rect.move(2,2))
+        self.SCREEN.blit(hp_box, hp_box_rect)
+        self.SCREEN.blit(hp_surf, hp_surf.get_rect(center=hp_box_rect.center))
 
     def draw_ui(self):
         top_box = pg.Surface((self.SCREEN.get_width(), 40), pg.SRCALPHA)
-        top_box.fill((194, 31, 31))
+        top_box.fill((54, 54, 54, 200))  # Adjusted background color with opacity
         top_box_rect = top_box.get_rect()
         if not hasattr(self, 'ui_alpha'):
             self.ui_alpha = 0
@@ -3422,12 +3784,13 @@ class Stage3:
         top_box.set_alpha(self.ui_alpha)
         self.SCREEN.blit(top_box, top_box_rect)
 
-        score_surf = self.font.render(f"Score: {self.score}",
-                                      True, (255, 255, 255))
-        health_surf = self.font.render(f"Health: {self.health}",
-                                       True, (255, 255, 255))
-        enemy_name = self.font.render(f"Enemy: THE ICE KING",
-                                      True, (255, 255, 255))
+        # Render the main text and its shadow
+        score_surf = self.font.render(f"Score: {self.score}", True, (255, 255, 255))
+        health_surf = self.font.render(f"Health: {self.health}", True, (255, 255, 255))
+        enemy_name = self.font.render(f"Enemy: {self.enemy.name}", True, (255, 255, 255))
+        score_shadow = self.font.render(f"Score: {self.score}", True, (0, 0, 0))
+        health_shadow = self.font.render(f"Health: {self.health}", True, (0, 0, 0))
+        enemy_shadow = self.font.render(f"Enemy: {self.enemy.name}", True, (0, 0, 0))
 
         # Calculate positions for the text
         screen_width = self.SCREEN.get_width()
@@ -3435,6 +3798,13 @@ class Stage3:
         health_pos = (screen_width // 3, 10)
         enemy_pos = (2 * screen_width // 3, 10)
 
+        # Offset for the shadow effect
+        shadow_offset = (2, 2)
+
+        # Blit the shadow first, then the main text
+        self.SCREEN.blit(score_shadow, (score_pos[0] + shadow_offset[0], score_pos[1] + shadow_offset[1]))
+        self.SCREEN.blit(health_shadow, (health_pos[0] + shadow_offset[0], health_pos[1] + shadow_offset[1]))
+        self.SCREEN.blit(enemy_shadow, (enemy_pos[0] + shadow_offset[0], enemy_pos[1] + shadow_offset[1]))
         self.SCREEN.blit(score_surf, score_pos)
         self.SCREEN.blit(health_surf, health_pos)
         self.SCREEN.blit(enemy_name, enemy_pos)
@@ -3611,6 +3981,7 @@ class Minion1SThree(Stage3Enemies):
         self.dialogue_text = "\"Prepare yourself for the battle!\""
         self.defeat_text = "\"Congrats!\""
         self.word_speed = 1.6
+        self.name = "Finalist Havier"
 
 class Minion2SThree(Stage3Enemies):
     def __init__(self, screen, level):
@@ -3619,6 +3990,7 @@ class Minion2SThree(Stage3Enemies):
         self.dialogue_text = "\"Prepare yourself for the battle!\""
         self.defeat_text = "\"Congrats!\""
         self.word_speed = 1.8
+        self.name = "Finalist Vade"
 
 class Minion3SThree(Stage3Enemies):
     def __init__(self, screen, level):
@@ -3627,6 +3999,7 @@ class Minion3SThree(Stage3Enemies):
         self.dialogue_text = "\"Prepare yourself for the battle!\""
         self.defeat_text = "\"Congrats!\""
         self.word_speed = 2.0
+        self.name = "Finalist Kris"
 
 class BossSThree(Stage3Enemies):
     def __init__(self, screen, level):
@@ -3644,6 +4017,7 @@ class BossSThree(Stage3Enemies):
         self.max_health = self.hitpoints  # Store the initial maximum health
         self.word_speed = 4.4 # Boss has a faster word speed
         self.sprite_rect.centery = self.height // 2  # Adjusted to align with the prompt surf
+        self.name = "THE ICE KING"
 
     def get_max_health(self):
         return self.max_health

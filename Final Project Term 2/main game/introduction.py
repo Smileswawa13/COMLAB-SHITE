@@ -332,6 +332,10 @@ class Stage1Outro:
             self.skip_prompt_shadow = self.font.render("Press any key to skip", True, (0, 0, 0))
             self.skip_rect = self.skip_prompt.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 50))
             self.text_fully_displayed = False
+
+            # Start a new thread to load and play intro music
+            self.music_thread = threading.Thread(target=self.load_and_play_music)
+            self.music_thread.start()
         except Exception as e:
             print(f"Error initializing Stage1Outro: {e}")
             sys.exit()
@@ -411,6 +415,19 @@ class Stage2Intro:
         self.skip_rect = self.skip_prompt.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 50))
         self.text_fully_displayed = False
 
+        # Start a new thread to load and play intro music
+        self.music_thread = threading.Thread(target=self.load_and_play_music)
+        self.music_thread.start()
+
+    def load_and_play_music(self):
+        try:
+            # Load and play intro song
+            self.music = "resources/sounds/songs/s1_inout.mp3"
+            pg.mixer.music.load(self.music)
+            pg.mixer.music.play(-1)
+        except Exception as e:
+            print(f"Error loading and playing music: {e}")
+
     def run(self):
         pg.time.set_timer(pg.USEREVENT, self.message.speed)
         while True:
@@ -429,6 +446,7 @@ class Stage2Intro:
                         try:
                             if event.type == pg.KEYDOWN:
                                 LoadingScreen(self.SCREEN).run()
+                                pg.mixer.music.stop()
                                 from stages import Stage2
                                 Stage2(self.SCREEN, 2).run()
                                 return
@@ -471,6 +489,19 @@ class Stage2Outro:
         self.skip_rect = self.skip_prompt.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 50))
         self.text_fully_displayed = False
 
+        # Start a new thread to load and play intro music
+        self.music_thread = threading.Thread(target=self.load_and_play_music)
+        self.music_thread.start()
+
+    def load_and_play_music(self):
+        try:
+            # Load and play intro song
+            self.music = "resources/sounds/songs/s1_inout.mp3"
+            pg.mixer.music.load(self.music)
+            pg.mixer.music.play(-1)
+        except Exception as e:
+            print(f"Error loading and playing music: {e}")
+
     def run(self):
         pg.time.set_timer(pg.USEREVENT, self.message.speed)
         while True:
@@ -489,6 +520,7 @@ class Stage2Outro:
                         try:
                             if event.type == pg.KEYDOWN:
                                 LoadingScreen(self.SCREEN).run()
+                                pg.mixer.music.stop()
                                 Stage3Intro(self.SCREEN).run()
                                 # from stages import Stage3
                                 # Stage3(self.SCREEN, 3).run()
@@ -535,6 +567,20 @@ class Stage3Intro:
         self.skip_rect = self.skip_prompt.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 50))
         self.text_fully_displayed = False
 
+        # Start a new thread to load and play intro music
+        pg.mixer.init()
+        self.music_thread = threading.Thread(target=self.load_and_play_music)
+        self.music_thread.start()
+
+    def load_and_play_music(self):
+        try:
+            # Load and play intro song
+            self.music = "resources/sounds/songs/s1_inout.mp3"
+            pg.mixer.music.load(self.music)
+            pg.mixer.music.play(-1)
+        except Exception as e:
+            print(f"Error loading and playing music: {e}")
+
     def run(self):
         pg.time.set_timer(pg.USEREVENT, self.message.speed)
         while True:
@@ -554,6 +600,7 @@ class Stage3Intro:
                             if event.type == pg.KEYDOWN:
                                 LoadingScreen(self.SCREEN).run()
                                 from stages import Stage3
+                                pg.mixer.music.stop()
                                 Stage3(self.SCREEN, 3).run()
                                 return
                         except Exception as e:
@@ -596,6 +643,20 @@ class Stage3Outro:
             center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 50))
         self.text_fully_displayed = False
 
+        # Start a new thread to load and play intro music
+        pg.mixer.init()
+        self.music_thread = threading.Thread(target=self.load_and_play_music)
+        self.music_thread.start()
+
+    def load_and_play_music(self):
+        try:
+            # Load and play intro song
+            self.music = "resources/sounds/songs/s1_inout.mp3"
+            pg.mixer.music.load(self.music)
+            pg.mixer.music.play(-1)
+        except Exception as e:
+            print(f"Error loading and playing music: {e}")
+
     def run(self):
         pg.time.set_timer(pg.USEREVENT, self.message.speed)
         while True:
@@ -614,6 +675,7 @@ class Stage3Outro:
                         try:
                             if event.type == pg.KEYDOWN:
                                 LoadingScreen(self.SCREEN).run()
+                                pg.mixer.music.stop()
                                 from endings import Ending
                                 Ending(self.SCREEN).run()
                                 return
@@ -640,6 +702,5 @@ class Stage3Outro:
             self.SCREEN.blit(self.skip_prompt, self.skip_rect)
             pg.display.flip()
             pg.time.Clock().tick(60)
-
 
 """STAGE 3 INTRO-OUTRO END ---------------------------------------------------------------------------------------------"""
