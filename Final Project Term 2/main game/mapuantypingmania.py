@@ -15,18 +15,17 @@ Game Description: A typing game to see how good you are at typing
 VERSION 2PM 03/01/25
 """
 
-
 """
 TO DO: MAAM IGNORE THIS!
-    CLEAN UP CODE AND ADD PROPER COMMENTS
-    POLISH
-    CHECK FOR UNUSED FUNCTIONS
-    HAVE SOME OF THE FUNCTIONS THAT ARE USED EVERYWHERE UNIVERSAL
-    ADD SONGS
-    PROPER GAME OVER
+    CLEAN UP CODE AND ADD PROPER COMMENTS - done
+    POLISH - done
+    CHECK FOR UNUSED FUNCTIONS - skip
+    HAVE SOME OF THE FUNCTIONS THAT ARE USED EVERYWHERE UNIVERSAL - done
+    ADD SONGS - done
+    PROPER GAME OVER - done
     STAGE 1  is done howah
-    STAGE 2 just need edit
-    STAGE 3 just need edit
+    STAGE 2 just need edit - done
+    STAGE 3 just need edit - done
     OPTIONS - SOUND, MUSIC, DIFFICULTY - skip din
     LEADERBOARD - check
     CHALLENGE MODE - Skip nlng for now. Unless ma'am asks us to implement
@@ -40,7 +39,7 @@ TO DO: MAAM IGNORE THIS!
     SAVE MODE - skip
     SET UP HIGH SCORES - done
     ADD ABILITIES IN BETWEEN LEVELS - skip
-    CHNAGE NAMES FOR ENEMIES - done for bosses
+    CHNAGE NAMES FOR ENEMIES - done for bosses - done
 """
 
 import os
@@ -190,6 +189,15 @@ class GameMenu(object):
             PLAY_RECT = PLAY_TEXT.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() // 2 - 250))
             self.SCREEN.blit(PLAY_TEXT_SHADOW, PLAY_RECT.move(2, 2))
             self.SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+
+            # Render the "Press ESC" text with shadow
+            ESC_Text = get_Font(12).render("Press ESC to go back, "
+                                           "mostly works for most displays or stages too!", True, "White")
+            ESC_Text_Shadow = get_Font(12).render("Press ESC to go back, "
+                                                  "mostly works for most displays or stages too!", True, "Black")
+            ESC_Rect = ESC_Text.get_rect(center=(self.SCREEN.get_width() // 2, self.SCREEN.get_height() - 20))
+            self.SCREEN.blit(ESC_Text_Shadow, ESC_Rect.move(2, 2))
+            self.SCREEN.blit(ESC_Text, ESC_Rect)
 
             # adjust the button start in the screen so that it will go in the rightplace
             button_y_start = self.SCREEN.get_height() // 2 - 180
