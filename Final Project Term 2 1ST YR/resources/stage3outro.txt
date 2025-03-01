@@ -1,0 +1,22 @@
+The auditorium fell into an anxious silence as the host took center stage, 
+holding an envelope containing the final results. 
+Contestants stood behind their respective college banners, 
+eyes locked onto the host, waiting for their fate to be revealed.
+
+The audience, a mix of students, faculty, and alumni, 
+leaned forward in their seats, the tension thick enough to cut with a knife. 
+The large LED screen above the stage flickered, ready to display the final rankings.
+
+The host cleared his throat and spoke into the mic.
+
+Host: The scores has been settled, and we have the results.
+Host: Let us start with the 3rd runner up...
+Host: The 3rd runner up for this contest is.... The College of Accountancy! Lets have a round of applause!
+Host: The 2nd runner up will be.... The College of Computer Arts and Sciences! Lets have a round of applause!
+Host: The Champion for this year's contest... Well that is indeed surprising.
+The challenger of College of Architecture and Engineering!!!
+Host: Despite being a college freshmen, they sure did dominate this contest!
+Let's have a round of applause!
+
+CSIS Contestant: Damn.. 1st Runner Up Again? I guess the engineering are really good with typing.
+You: I actually got it! All my past and hobbies, they are all useful to me.
