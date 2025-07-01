@@ -6,6 +6,10 @@ package login;
 
 import javax.swing.JOptionPane;
 import com.formdev.flatlaf.FlatDarkLaf;
+import java.io.InputStream;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 /**
  *
@@ -20,6 +24,7 @@ public class loginScreen extends javax.swing.JFrame {
      */
     public loginScreen() {
         initComponents();
+        playSound();
     }
 
     /**
@@ -200,6 +205,23 @@ public class loginScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_buttonCreateAccountActionPerformed
 
+    private void playSound() {
+    try {
+        // Use an InputStream to read the sound file from within the JAR
+        InputStream inputStream = getClass().getResourceAsStream("/assets/startup_sound.wav");
+        if (inputStream != null) {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start(); // Play the sound
+        } else {
+            System.out.println("Couldn't find sound file");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+    
     /**
      * @param args the command line arguments
      */
