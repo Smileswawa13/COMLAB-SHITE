@@ -202,7 +202,9 @@ public class loginScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_passwordActionPerformed
 
     private void buttonCreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCreateAccountActionPerformed
-        // TODO add your handling code here:
+        this.dispose();
+        FlatDarkLaf.setup();
+        new registration().setVisible(true);
     }//GEN-LAST:event_buttonCreateAccountActionPerformed
 
     private void playSound() {
