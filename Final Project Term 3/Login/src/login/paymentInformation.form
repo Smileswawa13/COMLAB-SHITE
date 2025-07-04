@@ -61,7 +61,6 @@
                           <Component id="infoName" alignment="0" min="-2" pref="300" max="-2" attributes="0"/>
                           <Component id="infoZIP1" alignment="1" min="-2" pref="300" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
